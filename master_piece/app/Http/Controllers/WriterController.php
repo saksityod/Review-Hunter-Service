@@ -843,7 +843,12 @@ class WriterController extends Controller {
         }
 
         $base_path = base_path() . $item[0]->article_stage_path;
-        $zipFileName = "".date('YmdHis').".zip";
+        $zipFileName = "Workflow-Document_".$id.".zip";
+        $base_path_file = $base_path . $id ."/". $zipFileName;
+
+        if(File::exists($base_path_file)) {
+            File::delete($base_path_file);
+        }
 
         $zip = new ZipArchive;
         if ($zip->open($base_path . $id ."/". $zipFileName, ZipArchive::CREATE) === TRUE) {    
@@ -913,8 +918,16 @@ class WriterController extends Controller {
         // $fileName = iconv('UTF-8','windows-874',$files);
         // return response()->json($fileName);
 
+        //$base_path = base_path() . $item[0]->article_path;
+        //$zipFileName = "".date('YmdHis').".zip";
+
         $base_path = base_path() . $item[0]->article_path;
-        $zipFileName = "".date('YmdHis').".zip";
+        $zipFileName = "Article-Document_".$article_id.".zip";
+        $base_path_file = $base_path . $article_id ."/". $zipFileName;
+
+        if(File::exists($base_path_file)) {
+            File::delete($base_path_file);
+        }
 
         //return response()->json($base_path . $article_id ."/". $zipFileName);
 
