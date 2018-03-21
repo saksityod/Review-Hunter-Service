@@ -351,7 +351,7 @@ class BAController extends Controller {
         $folder->is_active          = 1;
         $folder->is_template        = 0;
         $folder->folder_parent_id   = $req->folder_parent_id?$req->folder_parent_id:null;
-        $folder->user_id            = Auth::user()->userId;
+        //$folder->user_id            = Auth::user()->userId;
         $folder->created_by         = Auth::id();
         if($folder->save()){
             $path_folder = public_path().'/uploads/ba/'.$case->patient_id.'/'.$case->case_id.'/file/'.$parent.$folder_name;
