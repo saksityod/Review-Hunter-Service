@@ -1,0 +1,33 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Amphur extends Model
+{
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+	 
+	// const CREATED_AT = 'created_dttm';
+	// const UPDATED_AT = 'updated_dttm';	    
+	protected $table = 'amphure';
+	protected $primaryKey = 'amphur_id';
+	// public $incrementing = true;
+	//public $timestamps = false;
+	// //protected $guarded = array();
+	// protected $fillable = ['case_group','is_active','created_by', 'updated_by'];
+	// protected $hidden = ['created_by', 'updated_by', 'created_dttm', 'updated_dttm'];
+
+	public function province(){
+        return $this->hasOne('App\Province','province_id');
+    }
+
+    public function district(){
+        return $this->hasMany('App\District','amphur_id');
+    }
+
+}

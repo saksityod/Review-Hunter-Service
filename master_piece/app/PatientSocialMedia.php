@@ -1,0 +1,28 @@
+<?php
+
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class PatientSocialMedia extends Model
+{
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+	 
+	const CREATED_AT = 'created_dttm';
+	const UPDATED_AT = 'updated_dttm';
+    protected $table = 'patient_social_media';
+	protected $primaryKey = 'patient_media_id';
+	public $incrementing = true;
+	//public $timestamps = false;
+	//protected $guarded = array();
+	//protected $fillable = array('patient_id','social_media_id','user_link','n_of_follwer');
+	protected $hidden = ['created_by', 'updated_by', 'created_dttm', 'updated_dttm'];
+
+	public function socialMedia(){
+        return $this->hasOne('App\SocialMedia','social_media_id','social_media_id');
+    }
+}

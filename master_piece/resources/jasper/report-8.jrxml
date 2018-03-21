@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-8" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
+	<property name="ireport.zoom" value="1.7715610000000044"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="296"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_To" mode="Opaque" backcolor="#EBEDEF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="ChartPie" uuid="6fc527cf-8c93-462c-abc7-60268e352626">
+		<parameter name="param_year" class="java.lang.Integer"/>
+		<parameter name="param_case_type" class="java.lang.Integer"/>
+		<parameter name="param_case_group" class="java.lang.Integer"/>
+		<queryString>
+			<![CDATA[select ct.case_type, mp.procedure_name, count(*) as total
+from patient_case pc, case_followup cf, case_type ct, medical_procedure mp
+where pc.case_id = cf.case_id
+and pc.case_type_id = ct.case_type_id
+and cf.procedure_id = mp.procedure_id
+and cf.followup_year = $P{param_year}
+and pc.case_type_id = $P{param_case_type}
+and pc.case_group_id = $P{param_case_group}
+group by ct.case_type, mp.procedure_name
+order by mp.procedure_name]]>
+		</queryString>
+		<field name="case_type" class="java.lang.String">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="procedure_name" class="java.lang.String">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="total" class="java.lang.Long"/>
+	</subDataset>
+	<parameter name="param_year" class="java.lang.Integer"/>
+	<parameter name="param_case_type" class="java.lang.Integer"/>
+	<parameter name="param_case_group" class="java.lang.Integer"/>
+	<parameter name="param_case_name" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select p.hn_no, p.patient_name, pc.vn_no, mp.procedure_name,1 as totall
+from patient  p, patient_case pc, case_followup cf, medical_procedure mp
+where p.patient_id = pc.patient_id
+and pc.case_id = cf.case_id
+and cf.procedure_id = mp.procedure_id
+and cf.followup_year = $P{param_year}
+and pc.case_type_id = $P{param_case_type}
+and pc.case_group_id = $P{param_case_group}
+order by mp.procedure_name, p.hn_no, pc.vn_no]]>
+	</queryString>
+	<field name="hn_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="patient_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="vn_no" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="procedure_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="totall" class="java.lang.Long"/>
+	<variable name="totall_1" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{totall}]]></variableExpression>
+	</variable>
+	<variable name="totall_2" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{totall}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="391" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="414" height="32" forecolor="#2B2B26" uuid="c2ae9407-b289-4f27-bf25-d38e3791a461"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[รายงานหัตถการที่ควรทำต่อ]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="31" width="500" height="1" backcolor="#74C4C6" uuid="d05a909a-e03a-45fb-97d5-3c0be64cc8fb"/>
+				<graphicElement>
+					<pen lineWidth="2.5" lineColor="#74C4C6"/>
+				</graphicElement>
+			</line>
+			<textField evaluationTime="Page">
+				<reportElement x="0" y="42" width="555" height="20" uuid="7d76d551-fd53-4e36-81ab-4c07e0fc9142"/>
+				<textElement>
+					<font fontName="TH SarabunPSK" size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA["เคส :     "+ $P{param_case_name} +"      ปี :      "+$P{param_year}+"      จำนวน :      "+$V{totall_2}+"      หัตถการ"]]></textFieldExpression>
+			</textField>
+			<pieChart>
+				<chart>
+					<reportElement mode="Transparent" x="0" y="72" width="555" height="241" backcolor="#FFFFFF" uuid="990f5538-3bd2-41b2-bad2-c7d0541c07cb"/>
+					<box>
+						<pen lineColor="#000000"/>
+						<topPen lineWidth="0.25" lineColor="rgba(204, 204, 204, 0.52156866)"/>
+						<leftPen lineWidth="0.25" lineColor="rgba(204, 204, 204, 0.52156866)"/>
+						<bottomPen lineWidth="0.25" lineColor="rgba(204, 204, 204, 0.52156866)"/>
+						<rightPen lineWidth="0.25" lineColor="rgba(204, 204, 204, 0.52156866)"/>
+					</box>
+					<chartTitle position="Top" color="#2B2B26"/>
+					<chartSubtitle/>
+					<chartLegend backgroundColor="#FFFFFF" position="Bottom">
+						<font fontName="TH SarabunPSK" size="14" isBold="true"/>
+					</chartLegend>
+				</chart>
+				<pieDataset>
+					<dataset>
+						<datasetRun subDataset="ChartPie" uuid="11cee5b7-46f1-4ef1-94e2-475b932afc93">
+							<datasetParameter name="param_year">
+								<datasetParameterExpression><![CDATA[$P{param_year}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="param_case_type">
+								<datasetParameterExpression><![CDATA[$P{param_case_type}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="param_case_group">
+								<datasetParameterExpression><![CDATA[$P{param_case_group}]]></datasetParameterExpression>
+							</datasetParameter>
+						</datasetRun>
+					</dataset>
+					<keyExpression><![CDATA[$F{procedure_name}]]></keyExpression>
+					<valueExpression><![CDATA[$F{total}]]></valueExpression>
+				</pieDataset>
+				<piePlot isShowLabels="true" isCircular="true" labelFormat="({2})" legendLabelFormat="{0}">
+					<plot/>
+					<itemLabel color="rgba(43, 43, 38, 0.8627451)" backgroundColor="#FBF7E3">
+						<font fontName="TH SarabunPSK" size="14"/>
+					</itemLabel>
+				</piePlot>
+			</pieChart>
+			<componentElement>
+				<reportElement key="table 1" mode="Transparent" x="0" y="327" width="180" height="51" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="59974e65-24a0-4409-a884-347c0388f5f7"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="ChartPie" uuid="8ff85a51-eb73-44a2-906e-b716b5d2e09d">
+						<datasetParameter name="param_year">
+							<datasetParameterExpression><![CDATA[$P{param_year}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="param_case_type">
+							<datasetParameterExpression><![CDATA[$P{param_case_type}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="param_case_group">
+							<datasetParameterExpression><![CDATA[$P{param_case_group}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="180" uuid="7d404ed9-3b1b-402a-9920-88a57c244657">
+						<jr:columnHeader style="table_To" height="30" rowSpan="1">
+							<box>
+								<pen lineWidth="0.25"/>
+								<topPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.25"/>
+								<bottomPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.25"/>
+							</box>
+							<staticText>
+								<reportElement style="table_To" mode="Opaque" x="0" y="0" width="180" height="30" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="2392d867-74d0-4431-ba93-7fb494d5891f"/>
+								<box>
+									<pen lineWidth="0.0"/>
+									<topPen lineWidth="0.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="0.0"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="TH SarabunPSK" size="16" isBold="true"/>
+								</textElement>
+								<text><![CDATA[หัตถการ]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="20" rowSpan="1">
+							<box>
+								<pen lineWidth="0.25"/>
+								<topPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.25"/>
+								<bottomPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.25"/>
+							</box>
+							<textField>
+								<reportElement x="0" y="0" width="180" height="20" forecolor="#2B2B26" uuid="3f9ff82a-1248-4674-aa48-4236ce7d46cc"/>
+								<textElement textAlignment="Center">
+									<font fontName="TH SarabunPSK" size="16"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{procedure_name}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="90" uuid="3073c915-7513-4a60-9214-36614e60a483">
+						<jr:columnHeader style="table 1_CH" height="30" rowSpan="1">
+							<box>
+								<pen lineWidth="0.25"/>
+								<topPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.25"/>
+								<bottomPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.25"/>
+							</box>
+							<staticText>
+								<reportElement style="table_To" mode="Opaque" x="0" y="0" width="90" height="30" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="277338c1-0b43-4b38-9c20-86f8695455fe"/>
+								<box>
+									<pen lineWidth="0.0"/>
+									<topPen lineWidth="0.0"/>
+									<leftPen lineWidth="0.0"/>
+									<bottomPen lineWidth="0.0"/>
+									<rightPen lineWidth="0.0"/>
+								</box>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="TH SarabunPSK" size="16" isBold="true"/>
+								</textElement>
+								<text><![CDATA[จำนวนที่แนะนำ]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 1_TD" height="20" rowSpan="1">
+							<box>
+								<pen lineWidth="0.25"/>
+								<topPen lineWidth="0.25"/>
+								<leftPen lineWidth="0.25"/>
+								<bottomPen lineWidth="0.25"/>
+								<rightPen lineWidth="0.25"/>
+							</box>
+							<textField>
+								<reportElement x="0" y="0" width="90" height="20" forecolor="#2B2B26" uuid="f4bf655e-ff98-4ec9-bbbc-bcaa4a35ddbd"/>
+								<box rightPadding="3"/>
+								<textElement textAlignment="Right">
+									<font fontName="TH SarabunPSK" size="16"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="23">
+			<staticText>
+				<reportElement style="table_To" mode="Opaque" x="38" y="0" width="83" height="23" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="f44aa2d4-a0f7-495a-820c-832c4fdf8237"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[HN]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_To" mode="Opaque" x="121" y="0" width="199" height="23" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="9ee11f0a-2540-4b3b-b112-384a2328dc21"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ชื่อ-นามสกุล]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_To" mode="Opaque" x="320" y="0" width="73" height="23" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="4cb1876b-0d4d-4d4b-82a6-0e9329d79620"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[สถานะ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_To" mode="Opaque" x="393" y="0" width="162" height="23" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="670847e7-fa3e-44c7-b811-46bb909bb698"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[หัตถการ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table_To" mode="Opaque" x="0" y="0" width="38" height="23" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="eae04c99-8cfa-4991-85f5-4f5f313d3b7a"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ลำดับ]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20">
+			<textField>
+				<reportElement x="38" y="0" width="83" height="20" forecolor="#2B2B26" uuid="50eb7928-af41-486c-9461-5fbe5367e1fc"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hn_no}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="table 1_TD" x="121" y="0" width="199" height="20" forecolor="#2B2B26" uuid="308faae6-5568-44c1-a112-6d6976ee4ad3"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{patient_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="320" y="0" width="73" height="20" forecolor="#2B2B26" uuid="e88ba8cb-d52e-4846-8e49-f00c36a1a400"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vn_no}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="393" y="0" width="162" height="20" forecolor="#2B2B26" uuid="4cb7a3f5-f8e1-4f1e-a0f2-010d8060a178"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{procedure_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="38" height="20" forecolor="#2B2B26" uuid="a6a947e2-3586-4843-a4c6-ca8d2c8ec578"/>
+				<box leftPadding="0" rightPadding="3">
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

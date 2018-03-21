@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-6" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
+	<property name="ireport.zoom" value="0.9090909090909162"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="ireport.callouts" value="##Thu Mar 08 14:52:49 ICT 2018"/>
+	<style name="table">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2">
+		<box>
+			<pen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table 2_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="ChartPieRight" uuid="6fc527cf-8c93-462c-abc7-60268e352626">
+		<parameter name="param_start_date" class="java.lang.String">
+			<defaultValueExpression><![CDATA[2018-02-01]]></defaultValueExpression>
+		</parameter>
+		<parameter name="param_end_date" class="java.lang.String">
+			<defaultValueExpression><![CDATA[2018-02-28]]></defaultValueExpression>
+		</parameter>
+		<parameter name="param_status" class="java.lang.Integer">
+			<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select at.article_type_name, count(*) as no_of_article
+from article ar, article_type at
+where ar.article_type_id = at.article_type_id
+and ar.plan_date between $P{param_start_date} and $P{param_end_date}
+and CASE
+			WHEN 1 = $P{param_status} THEN ar.writing_end_date is not null and ar.writing_end_date <= ar.plan_date
+			WHEN 2 = $P{param_status} THEN (ar.writing_end_date is null or ar.writing_end_date > ar.plan_date)
+			ELSE true END
+group by at.article_type_name;]]>
+		</queryString>
+		<field name="article_type_name" class="java.lang.String">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="no_of_article" class="java.lang.Long"/>
+	</subDataset>
+	<subDataset name="ChartPieLeft" uuid="e0524485-e96c-4b4a-8fc9-652329b9b9e3">
+		<parameter name="param_start_date" class="java.lang.String">
+			<defaultValueExpression><![CDATA[2018-02-01]]></defaultValueExpression>
+		</parameter>
+		<parameter name="param_end_date" class="java.lang.String">
+			<defaultValueExpression><![CDATA[2018-02-28]]></defaultValueExpression>
+		</parameter>
+		<parameter name="param_status" class="java.lang.Integer">
+			<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+		</parameter>
+		<queryString>
+			<![CDATA[select mp.procedure_name, count(*) as no_of_article
+from article ar, medical_procedure mp
+where ar.procedure_id = mp.procedure_id
+and ar.plan_date between "2017-01-01" and "2018-12-01"
+and CASE
+			WHEN 1 = $P{param_status} THEN ar.writing_end_date is not null and ar.writing_end_date <= ar.plan_date
+			WHEN 2 = $P{param_status} THEN (ar.writing_end_date is null or ar.writing_end_date > ar.plan_date)
+			ELSE true END
+group by mp.procedure_name;]]>
+		</queryString>
+		<field name="procedure_name" class="java.lang.String">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="no_of_article" class="java.lang.Long"/>
+	</subDataset>
+	<parameter name="param_start_date" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2018-02-01]]></defaultValueExpression>
+	</parameter>
+	<parameter name="param_end_date" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2018-02-28]]></defaultValueExpression>
+	</parameter>
+	<parameter name="param_status" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[1]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select at.article_type_name, count(*) as no_of_article
+from article ar, article_type at
+where ar.article_type_id = at.article_type_id
+and ar.plan_date between $P{param_start_date} and $P{param_end_date}
+and CASE
+			WHEN 1 = $P{param_status} THEN ar.writing_end_date is not null and ar.writing_end_date <= ar.plan_date
+			WHEN 2 = $P{param_status} THEN (ar.writing_end_date is null or ar.writing_end_date > ar.plan_date)
+			ELSE true END
+group by at.article_type_name;]]>
+	</queryString>
+	<field name="article_type_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="no_of_article" class="java.lang.Long"/>
+	<variable name="no_of_article_1" class="java.lang.Long" resetType="Page" calculation="Sum">
+		<variableExpression><![CDATA[$F{no_of_article}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="292" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="414" height="32" forecolor="#2B2B26" uuid="c2ae9407-b289-4f27-bf25-d38e3791a461"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[รายงานการเขียนบทความ (ไม่มีเคส)]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="31" width="400" height="1" backcolor="#74C4C6" uuid="d05a909a-e03a-45fb-97d5-3c0be64cc8fb"/>
+				<graphicElement>
+					<pen lineWidth="2.5" lineColor="#74C4C6"/>
+				</graphicElement>
+			</line>
+			<textField evaluationTime="Page">
+				<reportElement x="0" y="46" width="402" height="20" uuid="7d76d551-fd53-4e36-81ab-4c07e0fc9142"/>
+				<textElement>
+					<font fontName="TH SarabunPSK" size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA["จำนวน :     "+ $V{no_of_article_1} +"      บทความ"]]></textFieldExpression>
+			</textField>
+			<pieChart>
+				<chart>
+					<reportElement mode="Transparent" x="0" y="71" width="395" height="221" backcolor="#FFFFFF" uuid="f810857f-2d95-4334-9473-7044d74c3ba6"/>
+					<box>
+						<pen lineColor="#000000"/>
+						<topPen lineWidth="0.25" lineColor="rgba(204, 204, 204, 0.52156866)"/>
+						<leftPen lineWidth="0.25" lineColor="rgba(204, 204, 204, 0.52156866)"/>
+						<bottomPen lineWidth="0.25" lineColor="rgba(204, 204, 204, 0.52156866)"/>
+						<rightPen lineWidth="0.25" lineColor="rgba(204, 204, 204, 0.52156866)"/>
+					</box>
+					<chartTitle position="Top" color="#2B2B26"/>
+					<chartSubtitle/>
+					<chartLegend backgroundColor="#FFFFFF" position="Bottom">
+						<font fontName="TH SarabunPSK" size="14" isBold="true"/>
+					</chartLegend>
+				</chart>
+				<pieDataset>
+					<dataset>
+						<datasetRun subDataset="ChartPieLeft" uuid="3a4b5f34-a9c4-41c3-b4fd-e49adf8b5815">
+							<datasetParameter name="param_start_date">
+								<datasetParameterExpression><![CDATA[$P{param_start_date}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="param_end_date">
+								<datasetParameterExpression><![CDATA[$P{param_end_date}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="param_status">
+								<datasetParameterExpression><![CDATA[$P{param_status}]]></datasetParameterExpression>
+							</datasetParameter>
+						</datasetRun>
+					</dataset>
+					<keyExpression><![CDATA[$F{procedure_name}]]></keyExpression>
+					<valueExpression><![CDATA[$F{no_of_article}]]></valueExpression>
+				</pieDataset>
+				<piePlot isShowLabels="false" isCircular="true" labelFormat="({2})" legendLabelFormat="{0}">
+					<plot/>
+					<itemLabel color="rgba(43, 43, 38, 0.8627451)" backgroundColor="#FBF7E3">
+						<font fontName="TH SarabunPSK" size="14"/>
+					</itemLabel>
+				</piePlot>
+			</pieChart>
+			<pieChart>
+				<chart>
+					<reportElement mode="Transparent" x="407" y="71" width="395" height="221" backcolor="#FFFFFF" uuid="990f5538-3bd2-41b2-bad2-c7d0541c07cb"/>
+					<box>
+						<pen lineColor="#000000"/>
+						<topPen lineWidth="0.25" lineColor="rgba(204, 204, 204, 0.52156866)"/>
+						<leftPen lineWidth="0.25" lineColor="rgba(204, 204, 204, 0.52156866)"/>
+						<bottomPen lineWidth="0.25" lineColor="rgba(204, 204, 204, 0.52156866)"/>
+						<rightPen lineWidth="0.25" lineColor="rgba(204, 204, 204, 0.52156866)"/>
+					</box>
+					<chartTitle position="Top" color="#2B2B26"/>
+					<chartSubtitle/>
+					<chartLegend backgroundColor="#FFFFFF" position="Bottom">
+						<font fontName="TH SarabunPSK" size="14" isBold="true"/>
+					</chartLegend>
+				</chart>
+				<pieDataset>
+					<dataset>
+						<datasetRun subDataset="ChartPieRight" uuid="5efa37f0-d998-44d4-b39c-003e41b1c436">
+							<datasetParameter name="param_start_date">
+								<datasetParameterExpression><![CDATA[$P{param_start_date}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="param_end_date">
+								<datasetParameterExpression><![CDATA[$P{param_end_date}]]></datasetParameterExpression>
+							</datasetParameter>
+							<datasetParameter name="param_status">
+								<datasetParameterExpression><![CDATA[$P{param_status}]]></datasetParameterExpression>
+							</datasetParameter>
+						</datasetRun>
+					</dataset>
+					<keyExpression><![CDATA[$F{article_type_name}]]></keyExpression>
+					<valueExpression><![CDATA[$F{no_of_article}]]></valueExpression>
+				</pieDataset>
+				<piePlot isShowLabels="false" isCircular="true" labelFormat="({2})" legendLabelFormat="{0}">
+					<plot/>
+					<itemLabel color="rgba(43, 43, 38, 0.8627451)" backgroundColor="#FBF7E3">
+						<font fontName="TH SarabunPSK" size="14"/>
+					</itemLabel>
+				</piePlot>
+			</pieChart>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="215" splitType="Stretch">
+			<componentElement>
+				<reportElement key="table 1" style="table 1" x="492" y="15" width="240" height="200" uuid="986efd53-a966-4dd6-978d-d2d5f8f90c35"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="ChartPieRight" uuid="c6331614-287a-4713-a535-76d71c2199aa">
+						<datasetParameter name="param_start_date">
+							<datasetParameterExpression><![CDATA[$P{param_start_date}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="param_end_date">
+							<datasetParameterExpression><![CDATA[$P{param_end_date}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="param_status">
+							<datasetParameterExpression><![CDATA[$P{param_status}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="180" uuid="750b3d7b-ce27-4b25-b17e-b00c097f7f42">
+						<jr:columnHeader style="table 1_CH" height="24" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="180" height="24" uuid="23a4bf5c-6ec3-414d-9025-565a5a5edb67"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="TH SarabunPSK" size="15" isBold="true"/>
+								</textElement>
+								<text><![CDATA[ประเภทบทความ]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="table 1_CH" height="0" rowSpan="1"/>
+						<jr:detailCell style="table 1_TD" height="20" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="180" height="20" uuid="b0d9799a-31e4-4282-88f0-c42f3cd62543"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="TH SarabunPSK" size="14"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{article_type_name}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="60" uuid="cb6252ff-556d-4256-9bfd-24a9e44c9839">
+						<jr:columnHeader style="table 1_CH" height="24" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="24" uuid="96b8dc42-389f-4f67-b0f6-dc0f8b2d945b"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="TH SarabunPSK" size="15" isBold="true"/>
+								</textElement>
+								<text><![CDATA[จำนวน]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="table 1_CH" height="0" rowSpan="1"/>
+						<jr:detailCell style="table 1_TD" height="20" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="60" height="20" uuid="6540c44e-1a53-4bc6-bda6-cf9368e66bb0"/>
+								<box rightPadding="3"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="TH SarabunPSK" size="14"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{no_of_article}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<componentElement>
+				<reportElement key="table 2" style="table 2" x="76" y="15" width="240" height="200" uuid="d0c404f2-6dcf-4738-9d53-179c51ce2bfa"/>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="ChartPieLeft" uuid="917f057c-64d9-4bf2-9fa9-32e05416724e">
+						<datasetParameter name="param_start_date">
+							<datasetParameterExpression><![CDATA[$P{param_start_date}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="param_end_date">
+							<datasetParameterExpression><![CDATA[$P{param_end_date}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="param_status">
+							<datasetParameterExpression><![CDATA[$P{param_status}]]></datasetParameterExpression>
+						</datasetParameter>
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					</datasetRun>
+					<jr:column width="180" uuid="47e127b2-36d6-44f8-a695-75a720294669">
+						<jr:columnHeader style="table 2_CH" height="24" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="180" height="24" uuid="c16858bb-0ada-4c88-a84e-b2cdcfd73e11"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="TH SarabunPSK" size="15" isBold="true"/>
+								</textElement>
+								<text><![CDATA[หัตถการ]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="180" height="20" uuid="053cf404-bd2f-46c0-87d8-2b59e955cde1"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="TH SarabunPSK" size="14"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{procedure_name}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="60" uuid="d9008723-82ee-45cc-96c9-445e219488c7">
+						<jr:columnHeader style="table 2_CH" height="24" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="60" height="24" uuid="06b91ecf-f613-46d2-af2e-9d12193efacb"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle">
+									<font fontName="TH SarabunPSK" size="15" isBold="true"/>
+								</textElement>
+								<text><![CDATA[จำนวน]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="table 2_TD" height="20" rowSpan="1">
+							<textField>
+								<reportElement x="0" y="0" width="60" height="20" uuid="ba9381c2-37cc-4df4-9016-63a4fe4e7cf3"/>
+								<box rightPadding="3"/>
+								<textElement textAlignment="Right" verticalAlignment="Middle">
+									<font fontName="TH SarabunPSK" size="14"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{no_of_article}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+	</pageHeader>
+</jasperReport>
