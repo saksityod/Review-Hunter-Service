@@ -97,7 +97,7 @@ class ReportController extends Controller
 	public function case_followup_year(Request $request)
 	{
 		$items = DB::select("
-			SELECT distinct followup_year FROM case_followup
+			SELECT distinct followup_year, followup_year + 543 FROM case_followup
 		");
 		return response()->json($items);
 	}

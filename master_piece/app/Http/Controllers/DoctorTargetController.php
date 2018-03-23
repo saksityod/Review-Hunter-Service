@@ -118,7 +118,7 @@ class DoctorTargetController extends Controller {
 
     public function list_year() {
         $items = DB::select("
-            SELECT year 
+            SELECT year, year + 543 as year_format
             from doctor_target
             group by year
         ");
