@@ -44,4 +44,8 @@ class User extends Model implements AuthenticatableContract,
     {
        return $this->password_; 
     }   
+
+    public function caseSupervised(){
+        return $this->belongsTo('App\CaseSupervised','userId','supervised_id');
+    }
 }

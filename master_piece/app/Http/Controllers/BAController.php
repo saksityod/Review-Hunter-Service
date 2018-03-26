@@ -40,6 +40,7 @@ use App\CaseStageDoc;
 use App\WorkflowStage;
 use App\CaseFile;
 use App\CaseFolder;
+use App\User;
 
 use ZipArchive;
 use Mail;
@@ -351,7 +352,7 @@ class BAController extends Controller {
         $folder->is_active          = 1;
         $folder->is_template        = 0;
         $folder->folder_parent_id   = $req->folder_parent_id?$req->folder_parent_id:null;
-        //$folder->user_id            = Auth::user()->userId;
+        // $folder->user_id            = Auth::user()->userId;
         $folder->created_by         = Auth::id();
         if($folder->save()){
             $path_folder = public_path().'/uploads/ba/'.$case->patient_id.'/'.$case->case_id.'/file/'.$parent.$folder_name;
@@ -448,6 +449,18 @@ class BAController extends Controller {
                     ->where('firstName', 'like','%'.$req->search.'%')->get();
     }
 
+    public function get_supervised_user(Request $req){
+        $search = $req->search;
+        $case_id = $req->case_id;
+
+        return user::where('firstName', 'like','%'.$search.'%')
+                // ->with(['caseSupervised'])
+                ->whereHas('caseSupervised',function($qry) use ($case_id){
+                    $qry->where('case_id',$case_id);
+                })
+                ->get(['userId','firstName','lastName','screenName']);
+    }
+
     public function get_amphur(Request $req){
         return Amphur::where('province_id',$req->province_id)
         ->wherehas('district.zipcode', function ($query) {
@@ -455,6 +468,7 @@ class BAController extends Controller {
         })
         ->get();
     }
+
     public function get_district(Request $req){
         return District::where('amphur_id',$req->amphur_id)->with('zipcode')
         ->wherehas('zipcode', function ($query) {
@@ -1130,7 +1144,7 @@ class BAController extends Controller {
                         $patient_case->case_group_id= $request['patient_case']['case_group_id'];
                         $patient_case->doctor_id    = $request['patient_case']['doctor_id'];
                         $patient_case->vn_no        = $request['patient_case']['vn_no'];
-                        $patient_case->suggest_group= $request['patient_case']['suggest_group'];
+                        // $patient_case->suggest_group= $request['patient_case']['suggest_group'];
                         $patient_case->suggested_by = $request['patient_case']['suggested_by'];
                         $patient_case->is_good_case = $request['patient_case']['is_good_case'];
                         $patient_case->is_bad_case  = $request['patient_case']['is_bad_case'];
@@ -1702,7 +1716,7 @@ class BAController extends Controller {
                         $patient_case->case_group_id= $request['patient_case']['case_group_id'];
                         $patient_case->doctor_id    = $request['patient_case']['doctor_id'];
                         $patient_case->vn_no        = $request['patient_case']['vn_no'];
-                        $patient_case->suggest_group= $request['patient_case']['suggest_group'];
+                        // $patient_case->suggest_group= $request['patient_case']['suggest_group'];
                         $patient_case->suggested_by = $request['patient_case']['suggested_by'];
                         $patient_case->is_good_case = $request['patient_case']['is_good_case'];
                         $patient_case->is_bad_case  = $request['patient_case']['is_bad_case'];
@@ -1731,7 +1745,7 @@ class BAController extends Controller {
                         $patient_case->case_group_id= $request['patient_case']['case_group_id'];
                         $patient_case->doctor_id    = $request['patient_case']['doctor_id'];
                         $patient_case->vn_no        = $request['patient_case']['vn_no'];
-                        $patient_case->suggest_group= $request['patient_case']['suggest_group'];
+                        // $patient_case->suggest_group= $request['patient_case']['suggest_group'];
                         $patient_case->suggested_by = $request['patient_case']['suggested_by'];
                         $patient_case->is_good_case = $request['patient_case']['is_good_case'];
                         $patient_case->is_bad_case  = $request['patient_case']['is_bad_case'];
