@@ -206,6 +206,7 @@ class TodoController extends Controller
 			and pc.doctor_id = dr.doctor_id
 			and cs.to_user_id = us.userId
 			and cs.to_stage_id = t_s.stage_id
+			and pc.case_stage_id = cs.case_stage_id
 		";
 		
 		empty($request->patient_id) ?: ($query .= " and pt.patient_id = ? " AND $qinput[] = $request->patient_id);
@@ -223,7 +224,8 @@ class TodoController extends Controller
 			and ac.procedure_id = mp.procedure_id
 			and ac.doctor_id = dr.doctor_id
 			and ars.to_user_id = us.userId
-			and ars.to_stage_id = t_s.stage_id		
+			and ars.to_stage_id = t_s.stage_id
+			and ac.article_stage_id = ars.article_stage_id
 		";
 		empty($request->status) ?: ($query .= " and ars.status = ? " AND $qinput[] = $request->status);
 		empty($request->procedure_id) ?: ($query .= " and ac.procedure_id = ? " AND $qinput[] = $request->procedure_id);
