@@ -246,7 +246,7 @@ class WriterController extends Controller {
             inner join lportal.user_ u on a.writer = u.userId
             inner join article_type at on at.article_type_id = a.article_type_id
             inner join medical_procedure p on p.procedure_id = a.procedure_id
-            inner join doctor d on d.doctor_id = a.doctor_id
+            left join doctor d on d.doctor_id = a.doctor_id
             inner join article_stage ats on ats.article_stage_id = a.article_stage_id
             inner join stage s on s.stage_id = ats.to_stage_id
             where a.writer $writer
@@ -297,7 +297,7 @@ class WriterController extends Controller {
                 'article_name' => 'required|max:256',
                 'article_type_id' => 'required|integer',
                 'procedure_id' => 'required|integer',
-                'doctor_id' => 'required|integer',
+                //'doctor_id' => 'required|integer',
                 'from_user_id' => 'required|integer',
                 'to_user_id' => 'required|integer',
                 'writing_start_date' => 'required',
@@ -312,8 +312,8 @@ class WriterController extends Controller {
                 'article_type_id.integer'  => 'ไม่พบข้อมูล ประเภทบทความ.',
                 'procedure_id.required' => 'กรุณาเลือก หัตถการ.',
                 'procedure_id.integer'  => 'ไม่พบข้อมูล หัตถการ.',
-                'doctor_id.required' => 'กรุณาเลือก แพทย์.',
-                'doctor_id.integer'  => 'ไม่พบข้อมูล แพทย์.',
+                //'doctor_id.required' => 'กรุณาเลือก แพทย์.',
+                //'doctor_id.integer'  => 'ไม่พบข้อมูล แพทย์.',
                 'from_user_id.required' => 'กรุณากรอก ผู้เขียน.',
                 'from_user_id.integer'  => 'ไม่พบข้อมูล ผู้เขียน.',
                 'to_user_id.required' => 'กรุณาเลือก ส่งถึง.',
