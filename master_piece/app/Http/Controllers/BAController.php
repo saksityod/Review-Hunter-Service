@@ -266,7 +266,7 @@ class BAController extends Controller {
             $data = $myQry->wherehas('caseFollowUp',function($qry) use($followup){
                         $qry->where('procedure_id',$followup);       });     }
         // $data = $myQry->paginate($perpage);
-        $data = $myQry->paginate($perpage);
+        $data = $myQry->orderby('case_id','DESC')->paginate($perpage);
         return response()->json($data);
     }
 
@@ -284,7 +284,7 @@ class BAController extends Controller {
                         'caseGroup' ,'doctor','procedure','casePrice','caseSocialMedia',
                         'caseCoordinate','caseFollowUp','caseAppointment.supervisedBy',
                         'caseContract.caseContractDoc','casePr','caseArticle.caseArticleDoc',
-                        'caseArticle.writer','stage'])
+                        'caseArticle.writer','caseStage'])
                 ->first();
         $data['folder'] = $this->get_case_folder($case_id);
         $data['caseStageHistory'] = $this->case_stage_history($case_id);
@@ -323,13 +323,6 @@ class BAController extends Controller {
         //             //     $query->where('case_id',$case_id);
         //             // })
                 ->get();
-         // $folder = caseFolder::where('case_id',$case_id)
-         //            ->with(['folder','folder.caseFolder','folder.caseFile','folder.caseFolder.subFolder','folder.caseFolder.subFolder.caseFile'])
-
-         //            ->wherehas('folder',function($query){
-         //                $query->whereNull('folder_parent_id');
-         //            })
-         //            ->get();
 
         return $folder; 
     }
@@ -526,17 +519,25 @@ class BAController extends Controller {
         }
     }
 
+    public function get_new_case_stage(Request $req) {
+        try {
+            return Stage::findOrFail(1);
+            
+        }catch (Exception $e) {
+            return response()->json(['status' => 400, 'errors' =>  $e]);
+        }
+    }  
+
     public function get_stage(Request $req) {
         try {
-            if($req->stage_id == ''){
-                $stage_id = 1;
-            }else{
-                  $stage_id = $req->stage_id;
-            }
-            $stage = WorkflowStage::where('from_stage_id',$stage_id)->with(['fromStage'=>function($qry){
+            if($req->case_stage_id == '')   $case_stage_id = 1;
+            else                            $case_stage_id = $req->case_stage_id;
+            $caseStage = CaseStage::where('case_stage_id',$case_stage_id)->with(['fromStage'=>function($qry){
                 $qry->select(['stage_id','stage_name']);
-            }])->first();
-            return $stage;
+            },'toStage'=>function($qry){
+                $qry->select(['stage_id','stage_name']);
+            }])->first(['case_stage_id','from_stage_id','to_stage_id']);
+            return $caseStage;
             
         }catch (Exception $e) {
             return response()->json(['status' => 400, 'errors' =>  $e]);
@@ -1150,7 +1151,7 @@ class BAController extends Controller {
                         $patient_case->is_bad_case  = $request['patient_case']['is_bad_case'];
                         $patient_case->is_good_review= $request['patient_case']['is_good_review'];
                         $patient_case->remark       = $request['patient_case']['remark'];
-                        $patient_case->case_stage_id = $request['patient_case']['stage_id'];
+                        $patient_case->case_stage_id = 0;
                         $patient_case->status       = $request['patient_case']['status'];
                         $patient_case->created_by   = Auth::id();
                         $patient_case->updated_by   = Auth::id();
@@ -1523,12 +1524,15 @@ class BAController extends Controller {
                         try {
                             $case_stage->save();
                             $current_case_stage = $case_stage->case_stage_id;
+
+                            PatientCase::where('case_id',$current_patient_case_id)->update(['case_stage_id'=>$case_stage->case_stage_id]);
                         } catch (Exception $e) {
                             $errors[] = [
                                 "table_name" => "case_stage",
                                 "errors" => $e
                             ];
                         } 
+
 
                         if($request['case_stage']['alerts']){
                             foreach ($request['case_stage']['alerts'] as $a) {
@@ -1722,7 +1726,6 @@ class BAController extends Controller {
                         $patient_case->is_bad_case  = $request['patient_case']['is_bad_case'];
                         $patient_case->is_good_review= $request['patient_case']['is_good_review'];
                         $patient_case->remark       = $request['patient_case']['remark'];
-                        $patient_case->case_stage_id= $request['patient_case']['stage_id'];
                         $patient_case->status       = $request['patient_case']['status'];
                         $patient_case->updated_by   = Auth::id();
                         try {
@@ -1751,7 +1754,7 @@ class BAController extends Controller {
                         $patient_case->is_bad_case  = $request['patient_case']['is_bad_case'];
                         $patient_case->is_good_review= $request['patient_case']['is_good_review'];
                         $patient_case->remark       = $request['patient_case']['remark'];
-                        $patient_case->case_stage_id= $request['patient_case']['stage_id'];
+                        $patient_case->case_stage_id= 0;
                         $patient_case->status       = $request['patient_case']['status'];
                         $patient_case->created_by = Auth::id();
                         $patient_case->updated_by = Auth::id();
@@ -2248,6 +2251,7 @@ class BAController extends Controller {
                         try {
                             $case_stage->save();
                             $current_case_stage = $case_stage->case_stage_id;
+                            PatientCase::where('case_id',$current_patient_case_id)->update(['case_stage_id'=>$case_stage->case_stage_id]);
                         } catch (Exception $e) {
                             $errors[] = [
                                 "table_name" => "case_stage",
