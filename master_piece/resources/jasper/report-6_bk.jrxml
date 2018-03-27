@@ -78,7 +78,7 @@
 			<![CDATA[select at.article_type_name, count(*) as no_of_article
 from article ar, article_type at
 where ar.article_type_id = at.article_type_id
-and ar.writing_start_date between $P{param_start_date} and $P{param_end_date}
+and ar.plan_date between $P{param_start_date} and $P{param_end_date}
 and CASE
 			WHEN 1 = $P{param_status} THEN ar.writing_end_date is not null and ar.writing_end_date <= ar.plan_date
 			WHEN 2 = $P{param_status} THEN (ar.writing_end_date is null or ar.writing_end_date > ar.plan_date)
@@ -104,7 +104,7 @@ group by at.article_type_name;]]>
 			<![CDATA[select mp.procedure_name, count(*) as no_of_article
 from article ar, medical_procedure mp
 where ar.procedure_id = mp.procedure_id
-and ar.writing_start_date between $P{param_start_date} and $P{param_end_date}
+and ar.plan_date between "2017-01-01" and "2018-12-01"
 and CASE
 			WHEN 1 = $P{param_status} THEN ar.writing_end_date is not null and ar.writing_end_date <= ar.plan_date
 			WHEN 2 = $P{param_status} THEN (ar.writing_end_date is null or ar.writing_end_date > ar.plan_date)
@@ -129,7 +129,7 @@ group by mp.procedure_name;]]>
 		<![CDATA[select at.article_type_name, count(*) as no_of_article
 from article ar, article_type at
 where ar.article_type_id = at.article_type_id
-and ar.writing_start_date between $P{param_start_date} and $P{param_end_date}
+and ar.plan_date between $P{param_start_date} and $P{param_end_date}
 and CASE
 			WHEN 1 = $P{param_status} THEN ar.writing_end_date is not null and ar.writing_end_date <= ar.plan_date
 			WHEN 2 = $P{param_status} THEN (ar.writing_end_date is null or ar.writing_end_date > ar.plan_date)
