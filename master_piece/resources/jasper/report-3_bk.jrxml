@@ -265,7 +265,7 @@ order by at.appointment_type_name]]>
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="24" isBold="true"/>
 				</textElement>
-				<text><![CDATA[รายงานการนัดเคสของแพทย์แต่ละท่าน]]></text>
+				<text><![CDATA[รายงานการนัดเคส]]></text>
 			</staticText>
 			<line>
 				<reportElement x="0" y="31" width="500" height="1" backcolor="#74C4C6" uuid="d05a909a-e03a-45fb-97d5-3c0be64cc8fb"/>
