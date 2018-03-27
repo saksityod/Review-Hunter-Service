@@ -32,8 +32,8 @@ class PatientCase extends Model
     public function patientSurgery(){
         return $this->hasMany('App\SurgeryHistory','patient_id','patient_id');
     }
-    public function stage(){
-        return $this->hasOne('App\Stage','stage_id','case_stage_id');
+    public function caseStage(){
+        return $this->hasOne('App\CaseStage','case_stage_id','case_stage_id');
     }
 
     /*  */

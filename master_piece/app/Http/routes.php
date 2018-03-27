@@ -105,10 +105,12 @@ Route::group(['middleware' => 'cors'], function()
 		Route::get('getCaseFolder/{case_id}','BAController@get_case_folder');
 		Route::get('getOnLoad'		,'BAController@get_dataOnload');
 		Route::get('getUser'		,'BAController@get_user');
+		Route::get('getSupervisedUser'		,'BAController@get_supervised_user');
 		Route::get('getProvince'	,'BAController@get_province');
 		Route::get('getAmphur'		,'BAController@get_amphur');
 		Route::get('getDistrict'	,'BAController@get_district');
 		Route::get('selectPathAll'	,'BaController@select_path_all');
+		Route::get('getNewCaseStage','BaController@get_new_case_stage');
 		Route::get('getStage'		,'BaController@get_stage');
 		Route::get('getUserAlert'	,'BaController@get_user_alert');
 		Route::get('action_to'		,'BaController@action_to');
