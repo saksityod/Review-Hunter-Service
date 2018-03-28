@@ -229,7 +229,7 @@ class WriterController extends Controller {
     public function search_writer(Request $request) {
         $writer = (empty($request->writer)) ? "like '%%'" : "= '{$request->writer}'";
         $procedure_id = (empty($request->procedure_id)) ? "like '%%'" : "= '{$request->procedure_id}'";
-        $doctor_id = (empty($request->doctor_id)) ? "like '%%'" : "= '{$request->doctor_id}'";
+        $doctor_id = (empty($request->doctor_id)) ? "" : "and a.doctor_id = '{$request->doctor_id}'";
 
         $query = "
             SELECT a.article_id,
@@ -251,7 +251,7 @@ class WriterController extends Controller {
             inner join stage s on s.stage_id = ats.to_stage_id
             where a.writer $writer
             and a.procedure_id $procedure_id
-            and a.doctor_id $doctor_id
+            ".$doctor_id."
             and a.writing_start_date between '{$request->writing_start_date}' and '{$request->writing_end_date}'
         ";
 
@@ -298,6 +298,7 @@ class WriterController extends Controller {
                 'article_type_id' => 'required|integer',
                 'procedure_id' => 'required|integer',
                 //'doctor_id' => 'required|integer',
+                'doctor_id' => 'integer',
                 'from_user_id' => 'required|integer',
                 'to_user_id' => 'required|integer',
                 'writing_start_date' => 'required',
@@ -313,7 +314,7 @@ class WriterController extends Controller {
                 'procedure_id.required' => 'กรุณาเลือก หัตถการ.',
                 'procedure_id.integer'  => 'ไม่พบข้อมูล หัตถการ.',
                 //'doctor_id.required' => 'กรุณาเลือก แพทย์.',
-                //'doctor_id.integer'  => 'ไม่พบข้อมูล แพทย์.',
+                'doctor_id.integer'  => 'ไม่พบข้อมูล แพทย์.',
                 'from_user_id.required' => 'กรุณากรอก ผู้เขียน.',
                 'from_user_id.integer'  => 'ไม่พบข้อมูล ผู้เขียน.',
                 'to_user_id.required' => 'กรุณาเลือก ส่งถึง.',
@@ -334,7 +335,7 @@ class WriterController extends Controller {
             $article->article_name = $request['article_name'];
             $article->article_type_id = $request['article_type_id'];
             $article->procedure_id = $request['procedure_id'];
-            $article->doctor_id = $request['doctor_id'];
+            $article->doctor_id = empty($request['doctor_id']) ? null : $request['doctor_id'];
             $article->writer = $request['from_user_id'];
             $article->writing_start_date = $request['writing_start_date'];
             $article->writing_end_date = $request['writing_end_date'];
@@ -498,7 +499,7 @@ class WriterController extends Controller {
             $article->article_name = $request['article_name'];
             $article->article_type_id = $request['article_type_id'];
             $article->procedure_id = $request['procedure_id'];
-            $article->doctor_id = $request['doctor_id'];
+            $article->doctor_id = empty($request['doctor_id']) ? null : $request['doctor_id'];
             $article->writer = $request['from_user_id'];
             $article->writing_start_date = $request['writing_start_date'];
             $article->writing_end_date = $request['writing_end_date'];
