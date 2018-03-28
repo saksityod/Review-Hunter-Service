@@ -135,6 +135,16 @@ class ReportController extends Controller
 			$date = date('Y-m-d', strtotime('-365 days'));
 		}
 
+		if($request->time_next==7) {
+			$date = date('Y-m-d', strtotime('+7 days'));
+		} else if($request->time_next==15) {
+			$date = date('Y-m-d', strtotime('+15 days'));
+		} else if($request->time_next==30) {
+			$date = date('Y-m-d', strtotime('+30 days'));
+		} else if($request->time_next==365) {
+			$date = date('Y-m-d', strtotime('+365 days'));
+		}
+
 		return response()->json(['status' => 200, 'data' => $date]);
 	}
 }
