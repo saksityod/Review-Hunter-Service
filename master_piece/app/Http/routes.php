@@ -180,6 +180,7 @@ Route::group(['middleware' => 'cors'], function()
 	  	Route::get('check_disabled','WriterController@check_disabled');
 
 	  	Route::get('list_to_user','WriterController@list_to_user');
+	  	Route::get('list_article_code','WriterController@list_article_code');
  	});
 	
 	//Report

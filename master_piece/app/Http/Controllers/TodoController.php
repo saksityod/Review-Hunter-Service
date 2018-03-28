@@ -197,7 +197,7 @@ class TodoController extends Controller
 	{
 		$qinput = array();
 		$query = "
-			select pt.patient_name as patient_name, 'N/A' as article_name, mp.procedure_name as procedure_name,  concat(us.firstName, ' ', us.lastName) as pic_name, 
+			select pt.patient_name as patient_name, 'N/A' as article_code, mp.procedure_name as procedure_name,  concat(us.firstName, ' ', us.lastName) as pic_name, 
 			t_s.stage_name as task_name, cs.status as status, cs.plan_date as plan_date, cs.actual_date as_actual_date, dr.doctor_name as doctor_name, pc.vn_no
 			from patient pt, patient_case pc, medical_procedure mp , case_stage cs, doctor dr, lportal.user_ us, stage t_s
 			where pt.patient_id = pc.patient_id
@@ -230,7 +230,7 @@ class TodoController extends Controller
 
 		$query .= "
 			union
-			select 'N/A' as patient_name, ac.article_name as article_name, mp.procedure_name as procedure_name, concat(us.firstName, ' ', us.lastName) as pic_name, 
+			select 'N/A' as patient_name, ac.article_code as article_code, mp.procedure_name as procedure_name, concat(us.firstName, ' ', us.lastName) as pic_name, 
 			t_s.stage_name as task_name, ars.status as status, ars.plan_date as plan_date, ars.actual_date as_actual_date, dr.doctor_name as doctor_name, 'N/A' as vn_no
 			from article ac
 			inner join medical_procedure mp on ac.procedure_id = mp.procedure_id
@@ -241,7 +241,7 @@ class TodoController extends Controller
 			inner join stage t_s on ars.to_stage_id = t_s.stage_id
 			where 1=1
 		";
-		
+
 		empty($request->status) ?: ($query .= " and ars.status = ? " AND $qinput[] = $request->status);
 		empty($request->procedure_id) ?: ($query .= " and ac.procedure_id = ? " AND $qinput[] = $request->procedure_id);
 		empty($request->doctor_id) ?: ($query .= " and ac.doctor_id = ? " AND $qinput[] = $request->doctor_id);

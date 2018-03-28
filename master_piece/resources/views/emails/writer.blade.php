@@ -1,7 +1,7 @@
 <h3>To : {{ $to_user }}</h3>
 ระบบ <b>Review Hunter</b>
 <br/>
-ชื่อบทความ : <b>{{ $article_name }}</b>
+รหัสบทความ : <b>{{ $article_code }}</b>
 <br/>
 หัตถการ : <b>{{ $procedure }}</b>
 <br/>

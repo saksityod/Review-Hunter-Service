@@ -230,9 +230,11 @@ class WriterController extends Controller {
         $writer = (empty($request->writer)) ? "like '%%'" : "= '{$request->writer}'";
         $procedure_id = (empty($request->procedure_id)) ? "like '%%'" : "= '{$request->procedure_id}'";
         $doctor_id = (empty($request->doctor_id)) ? "" : "and a.doctor_id = '{$request->doctor_id}'";
+        $article_code = (empty($request->article_code)) ? "like '%%'" : "like '%{$request->article_code}%'";
 
         $query = "
             SELECT a.article_id,
+                    a.article_code,
                     a.article_name,
                     CONCAT(a.writer, '-', u.screenName) as writer,
                     a.writing_start_date,
@@ -252,6 +254,7 @@ class WriterController extends Controller {
             where a.writer $writer
             and a.procedure_id $procedure_id
             ".$doctor_id."
+            and a.article_code $article_code
             and a.writing_start_date between '{$request->writing_start_date}' and '{$request->writing_end_date}'
         ";
 
@@ -331,7 +334,11 @@ class WriterController extends Controller {
 
         if(empty($request['article_id'])) {
             //add
+            $article_id = DB::select("select article_id from article order by article_id desc limit 0,1");
+            $article_code = empty($article_id[0]->article_id) ? 1 : $article_id[0]->article_id+1;
+
             $article = new Article;
+            $article->article_code = "".$article_code."".$request['from_user_id']."";
             $article->article_name = $request['article_name'];
             $article->article_type_id = $request['article_type_id'];
             $article->procedure_id = $request['procedure_id'];
@@ -658,7 +665,8 @@ class WriterController extends Controller {
                         stf.stage_name as from_stage_name,
                         stt.stage_name as to_stage_name,
                         a.status,
-                        a.article_name
+                        a.article_name,
+                        a.article_code
                 from article a
                 inner join medical_procedure m
                 on m.procedure_id = a.procedure_id
@@ -685,7 +693,7 @@ class WriterController extends Controller {
 
                     $data = [
                         "to_user" => $email_body[0]->to_user_name, 
-                        "article_name" => $email_body[0]->article_name, 
+                        "article_code" => $email_body[0]->article_code, 
                         "procedure" => $email_body[0]->procedure_name,
                         "from_stage_name" => $email_body[0]->from_stage_name,
                         "to_stage_name" => $email_body[0]->to_stage_name,
@@ -717,7 +725,7 @@ class WriterController extends Controller {
                 try {
                     $data = [
                         "to_user" => $email_body[0]->to_user_name, 
-                        "article_name" => $email_body[0]->article_name, 
+                        "article_code" => $email_body[0]->article_code, 
                         "procedure" => $email_body[0]->procedure_name,
                         "from_stage_name" => $email_body[0]->from_stage_name,
                         "to_stage_name" => $email_body[0]->to_stage_name,
@@ -958,7 +966,7 @@ class WriterController extends Controller {
     public function show(Request $request)
     {
         $article = DB::select("
-            SELECT a.article_id, a.article_name, a_t.article_type_id, m.procedure_id, m.procedure_name,
+            SELECT a.article_id, a.article_code, a.article_name, a_t.article_type_id, m.procedure_id, m.procedure_name,
             d.doctor_id, d.doctor_name, u.screenName writer_name, u.userId writer_id, a.writing_start_date, a.writing_end_date,
             a.plan_date, a.article_path, a.status, 
             s.article_stage_id, s.from_stage_id, fs.stage_name from_stage_name, s.to_stage_id, ts.stage_name to_stage_name,
@@ -1054,5 +1062,14 @@ class WriterController extends Controller {
         } else {
             return response()->json(['status' => 200]);
         }
+    }
+
+    public function list_article_code(Request $request) {
+        $items = DB::select("
+            SELECT article_code
+            from article
+            where article_code like '%{$request->article_code}%'
+        ");
+        return response()->json($items);
     }
 }
