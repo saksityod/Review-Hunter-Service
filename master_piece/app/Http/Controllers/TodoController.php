@@ -215,18 +215,33 @@ class TodoController extends Controller
 		empty($request->doctor_id) ?: ($query .= " and pc.doctor_id = ? " AND $qinput[] = $request->doctor_id);
 		empty($request->user_id) ?: ($query .= " and cs.to_user_id  = ? " AND $qinput[] = $request->user_id);
 			
+		// $query .= "
+		// 	union
+		// 	select 'N/A' as patient_name, ac.article_name as article_name, mp.procedure_name as procedure_name, concat(us.firstName, ' ', us.lastName) as pic_name, 
+		// 	t_s.stage_name as task_name, ars.status as status, ars.plan_date as plan_date, ars.actual_date as_actual_date, dr.doctor_name as doctor_name, 'N/A' as vn_no
+		// 	from article ac, medical_procedure mp, article_stage ars, doctor dr, lportal.user_ us, stage t_s
+		// 	where ac.article_id = ars.article_id
+		// 	and ac.procedure_id = mp.procedure_id
+		// 	and ac.doctor_id = dr.doctor_id
+		// 	and ars.to_user_id = us.userId
+		// 	and ars.to_stage_id = t_s.stage_id
+		// 	and ac.article_stage_id = ars.article_stage_id
+		// ";
+
 		$query .= "
 			union
 			select 'N/A' as patient_name, ac.article_name as article_name, mp.procedure_name as procedure_name, concat(us.firstName, ' ', us.lastName) as pic_name, 
 			t_s.stage_name as task_name, ars.status as status, ars.plan_date as plan_date, ars.actual_date as_actual_date, dr.doctor_name as doctor_name, 'N/A' as vn_no
-			from article ac, medical_procedure mp, article_stage ars, doctor dr, lportal.user_ us, stage t_s
-			where ac.article_id = ars.article_id
-			and ac.procedure_id = mp.procedure_id
-			and ac.doctor_id = dr.doctor_id
-			and ars.to_user_id = us.userId
-			and ars.to_stage_id = t_s.stage_id
-			and ac.article_stage_id = ars.article_stage_id
+			from article ac
+			inner join medical_procedure mp on ac.procedure_id = mp.procedure_id
+			inner join article_stage ars
+			on ac.article_id = ars.article_id and ac.article_stage_id = ars.article_stage_id
+			left join doctor dr on ac.doctor_id = dr.doctor_id
+			inner join lportal.user_ us on ars.to_user_id = us.userId
+			inner join stage t_s on ars.to_stage_id = t_s.stage_id
+			where 1=1
 		";
+		
 		empty($request->status) ?: ($query .= " and ars.status = ? " AND $qinput[] = $request->status);
 		empty($request->procedure_id) ?: ($query .= " and ac.procedure_id = ? " AND $qinput[] = $request->procedure_id);
 		empty($request->doctor_id) ?: ($query .= " and ac.doctor_id = ? " AND $qinput[] = $request->doctor_id);
