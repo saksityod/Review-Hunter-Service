@@ -292,39 +292,44 @@ class BAController extends Controller {
     }
 
     public function get_case_folder($case_id){
-        $folder = Folder::whereNull('folder_parent_id')
-                    ->with(['caseFolder'=>function ($query) use ($case_id){  
-                        $query->where('case_id',$case_id);  
-                    },'caseFile'=>function($query) use ($case_id){    
-                        $query->where('case_id',$case_id);  
-                    },'subFolder' =>function ($query){  
-                        $query->whereNotNull('folder_parent_id');   
-                    },'subFolder.caseFolder'=>function($query) use ($case_id){    
-                        $query->where('case_id',$case_id);  
-                    },'subFolder.caseFile'=>function($query) use ($case_id){  
-                        $query->where('case_id',$case_id);  
-                    }])
-                    ->wherehas('caseFolder',function($query) use ($case_id){
-                        $query->where('case_id',$case_id);
-                    })
-                    ->wherehas('caseFile',function($query) use ($case_id){
-                        $query->whereNotNull('file_id');
-                        // $query->where('case_id',$case_id);
-                    })
-                    ->orWherehas('subFolder.caseFile',function($query) use ($case_id){
-                        $query->whereNotNull('file_id');
-                        // $query->where('case_id',$case_id);
-                    })
-        //             // ->has('caseFile')
-        //             // ->wherehas('subFolder.caseFolder',function($query) use ($case_id){
-        //             //     $query->where('case_id',$case_id);
-        //             // })
-        //             // ->wherehas('caseFile',function($query) use ($case_id){
-        //             //     $query->where('case_id',$case_id);
-        //             // })
-                ->get();
+        $folder = db::table('case_folder as cf')
+                        ->where('cf.case_id',$case_id)
+                    ->join('folder as f' , 'cf.folder_id','=','f.folder_id')
+                        ->whereNull('f.folder_parent_id')
+                    ->get();
+        foreach ($folder as $fi => $f) {
+            $folder[$fi]->caseFile = db::table('case_file as fcf')
+                                            ->where('fcf.case_id',$case_id)
+                                            ->where('fcf.folder_id',$f->folder_id)
+                                            ->get();
 
-        return $folder; 
+            $folder[$fi]->subFolder = db::table('case_folder as csf')
+                                            ->where('csf.case_id',$case_id)
+                                            ->where('sf.folder_parent_id',$f->folder_id)
+                                        ->join('folder as sf' , 'csf.folder_id','=','sf.folder_id')
+                                            ->whereNOTNULL('sf.folder_parent_id')
+                                        ->get();
+
+            foreach ($folder[$fi]->subFolder as $sfi => $sf) {
+                $folder[$fi]->subFolder[$sfi]->caseFile = db::table('case_file as fcsf')
+                                                                ->where('fcsf.case_id',$case_id)
+                                                                ->where('fcsf.folder_id',$sf->folder_id)
+                                                                ->get();
+            }
+        }
+
+        // foreach ($folder as $fi => $f) {
+        //     foreach ($f as $sfi => $sf) {
+        //         if(sizeof($sf) == 0){
+        //             unset($sf);
+        //         }
+        //     }
+        //     if(sizeof($f->subFolder)>0){
+        //     }else{
+        //          unset($f);
+        //     }
+        // }
+        // return $folder; 
     }
 
     public function get_case_file(Request $req){
@@ -1187,7 +1192,6 @@ class BAController extends Controller {
                         }
 
                         $model_folder = Folder::where('is_template',1)
-                                        ->whereNull('folder_parent_id')
                                         ->with(['subFolder'=>function($qry){
                                                 $qry->whereNOTNULL('folder_parent_id');
                                             }])
@@ -1770,7 +1774,6 @@ class BAController extends Controller {
                         }
 
                         $model_folder = Folder::where('is_template',1)
-                                        ->whereNull('folder_parent_id')
                                         ->with(['subFolder'=>function($qry){
                                                 $qry->whereNOTNULL('folder_parent_id');
                                             }])
@@ -2493,7 +2496,8 @@ class BAController extends Controller {
                                 ->join('lportal.users_roles as rol', 'usr.userId', '=', 'rol.userId')
                                 ->select('rol.roleId as roleId')
                                 ->where('usr.userId',Auth::user()->userId)->lists('roleId');
-        $data['stageRole'] = Stage::find($req->stage_id);
+
+        $data['stageRole'] = Stage::where('stage_id',$req->stage_id)->first();
 
         return response()->json($data);
     }   

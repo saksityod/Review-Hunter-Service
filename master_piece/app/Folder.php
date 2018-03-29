@@ -31,6 +31,9 @@ class Folder extends Model
     public function caseFolder(){
         return $this->hasOne('App\CaseFolder','folder_id','folder_id');
     }
+    public function caseSubFolder(){
+        return $this->hasMany('App\CaseFolder','folder_id','folder_id');
+    }
     public function caseFile(){
         return $this->hasMany('App\CaseFile','folder_id','folder_id');
     }
