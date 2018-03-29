@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-4" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-5" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
 	<property name="ireport.zoom" value="1.6105100000000039"/>
-	<property name="ireport.x" value="206"/>
-	<property name="ireport.y" value="163"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="70"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -79,10 +79,10 @@ FROM
 							FROM
 								folder f2
 							WHERE
-								folder_screen_name = 'หลังทำคนไข้ส่งให้'
+								folder_screen_name = 'หลักฐานที่เคสลง'
 						)
 						AND cf.is_pass = 1
-						AND date(pc.created_dttm) BETWEEN $P{param_start_date} and $P{param_end_date}
+						AND date(pc.created_dttm) BETWEEN $P{param_start_date} AND $P{param_end_date}
 						GROUP BY
 							case_id
 						UNION ALL
@@ -106,29 +106,32 @@ FROM
 								FROM
 									folder f2
 								WHERE
-									folder_screen_name = 'หลังทำคนไข้ส่งให้'
+									folder_screen_name = 'หลักฐานที่เคสลง'
 							)
-							AND date(pc.created_dttm) BETWEEN $P{param_start_date} and $P{param_end_date}
+							AND date(pc.created_dttm) BETWEEN $P{param_start_date}
+							AND $P{param_end_date}
 							GROUP BY
 								case_id
 					) s1
 				GROUP BY
 					case_id
 			) s2
-		GROUP BY
+		group by
 			case_id
 	) s3,
 	patient_case pc,
 	patient p,
 	medical_procedure mp
-WHERE
+where
 	s3.case_id = pc.case_id
-AND pc.patient_id = p.patient_id
-AND pc.procedure_id = mp.procedure_id
-ORDER BY
+and pc.patient_id = p.patient_id
+and pc.procedure_id = mp.procedure_id
+order by
 	mp.procedure_name,
 	p.hn_no,
-	pc.vn_no) d
+	pc.vn_no)d
+
+
 UNION
 
 select "ลงไม่ครบ" as STATUS , SUM(d.no_full) as total
@@ -176,114 +179,7 @@ FROM
 							FROM
 								folder f2
 							WHERE
-								folder_screen_name = 'หลังทำคนไข้ส่งให้'
-						)
-						AND cf.is_pass = 1
-						AND date(pc.created_dttm) BETWEEN $P{param_start_date} and $P{param_end_date}
-						GROUP BY
-							case_id
-						UNION ALL
-							SELECT
-								cf.case_id AS case_id,
-								0 AS n_complete,
-								count(DISTINCT cf.folder_id) AS n_total
-							FROM
-								patient_case pc,
-								case_folder cf,
-								folder f,
-								case_type ct
-							WHERE
-								pc.case_id = cf.case_id
-							AND cf.folder_id = f.folder_id
-							AND pc.case_type_id = ct.case_type_id
-							AND pc.case_type_id = $P{param_case_type}
-							AND f.folder_parent_id = (
-								SELECT
-									f2.folder_id
-								FROM
-									folder f2
-								WHERE
-									folder_screen_name = 'หลังทำคนไข้ส่งให้'
-							)
-							AND date(pc.created_dttm) BETWEEN $P{param_start_date} and $P{param_end_date}
-							GROUP BY
-								case_id
-					) s1
-				GROUP BY
-					case_id
-			) s2
-		GROUP BY
-			case_id
-	) s3,
-	patient_case pc,
-	patient p,
-	medical_procedure mp
-WHERE
-	s3.case_id = pc.case_id
-AND pc.patient_id = p.patient_id
-AND pc.procedure_id = mp.procedure_id
-ORDER BY
-	mp.procedure_name,
-	p.hn_no,
-	pc.vn_no) d]]>
-		</queryString>
-		<field name="STATUS" class="java.lang.String">
-			<fieldDescription><![CDATA[]]></fieldDescription>
-		</field>
-		<field name="total" class="java.math.BigDecimal"/>
-	</subDataset>
-	<parameter name="param_start_date" class="java.lang.String">
-		<defaultValueExpression><![CDATA[2018-02-01]]></defaultValueExpression>
-	</parameter>
-	<parameter name="param_end_date" class="java.lang.String">
-		<defaultValueExpression><![CDATA[2018-02-28]]></defaultValueExpression>
-	</parameter>
-	<parameter name="param_case_type" class="java.lang.String"/>
-	<queryString>
-		<![CDATA[SELECT
-	p.hn_no,
-	p.patient_name,
-	pc.vn_no,
-IF (n_complete = n_total,'ครบ','ยังไม่ครบ') AS STATUS,
- mp.procedure_name,
- 1 as all_hn_no,
-IF (n_complete = n_total,1,0) AS is_full,
-IF (n_complete != n_total,1,0) AS no_full
-FROM
-	(
-		SELECT
-			case_id,
-			sum(n_complete) AS n_complete,
-			sum(n_total) AS n_total
-		FROM
-			(
-				SELECT
-					case_id,
-					sum(n_complete) AS n_complete,
-					sum(n_total) AS n_total
-				FROM
-					(
-						SELECT
-							cf.case_id AS case_id,
-							count(DISTINCT cf.folder_id) AS n_complete,
-							0 AS n_total
-						FROM
-							patient_case pc,
-							case_folder cf,
-							folder f,
-							case_type ct
-						WHERE
-							pc.case_id = cf.case_id
-						AND cf.folder_id = f.folder_id
-						AND pc.case_type_id = ct.case_type_id
-						AND pc.case_type_id = $P{param_case_type}
-						AND f.folder_parent_id = (
-							SELECT
-								f2.folder_id
-							FROM
-								folder f2
-							WHERE
-								folder_screen_name = 'หลังทำคนไข้ส่งให้'
+								folder_screen_name = 'หลักฐานที่เคสลง'
 						)
 						AND cf.is_pass = 1
 						AND date(pc.created_dttm) BETWEEN $P{param_start_date} AND $P{param_end_date}
@@ -310,7 +206,7 @@ FROM
 								FROM
 									folder f2
 								WHERE
-									folder_screen_name = 'หลังทำคนไข้ส่งให้'
+									folder_screen_name = 'หลักฐานที่เคสลง'
 							)
 							AND date(pc.created_dttm) BETWEEN $P{param_start_date} AND $P{param_end_date}
 							GROUP BY
@@ -319,20 +215,75 @@ FROM
 				GROUP BY
 					case_id
 			) s2
-		GROUP BY
+		group by
 			case_id
 	) s3,
 	patient_case pc,
 	patient p,
 	medical_procedure mp
-WHERE
+where
 	s3.case_id = pc.case_id
-AND pc.patient_id = p.patient_id
-AND pc.procedure_id = mp.procedure_id
-ORDER BY
+and pc.patient_id = p.patient_id
+and pc.procedure_id = mp.procedure_id
+order by
 	mp.procedure_name,
 	p.hn_no,
-	pc.vn_no]]>
+	pc.vn_no)d]]>
+		</queryString>
+		<field name="STATUS" class="java.lang.String">
+			<fieldDescription><![CDATA[]]></fieldDescription>
+		</field>
+		<field name="total" class="java.math.BigDecimal"/>
+	</subDataset>
+	<parameter name="param_start_date" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2018-02-01]]></defaultValueExpression>
+	</parameter>
+	<parameter name="param_end_date" class="java.lang.String">
+		<defaultValueExpression><![CDATA[2018-02-28]]></defaultValueExpression>
+	</parameter>
+	<parameter name="param_case_type" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[2]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select p.hn_no, p.patient_name, pc.vn_no, if(n_complete = n_total, 'ครบ', 'ไม่ยังครบ') as STATUS, mp.procedure_name,
+ 1 as all_hn_no,
+IF (n_complete = n_total,1,0) AS is_full,
+IF (n_complete != n_total,1,0) AS no_full
+from
+(
+select case_id, sum(n_complete) as n_complete, sum(n_total) as n_total
+from
+(
+select case_id, sum(n_complete) as n_complete, sum(n_total) as n_total
+from
+(select cf.case_id as case_id, count(distinct cf.folder_id) as n_complete,  0 as n_total
+from patient_case pc, case_folder cf, folder f, case_type ct
+where pc.case_id = cf.case_id
+and cf.folder_id = f.folder_id
+and pc.case_type_id = ct.case_type_id
+and pc.case_type_id = $P{param_case_type}
+and f.folder_parent_id = (select f2.folder_id from folder f2 where folder_screen_name = 'หลักฐานที่เคสลง')
+and cf.is_pass = 1
+and date(pc.created_dttm) between $P{param_start_date} and $P{param_end_date}
+group by case_id
+union all
+select cf.case_id as case_id, 0 as n_complete,  count(distinct cf.folder_id) as n_total
+from patient_case pc, case_folder cf, folder f, case_type ct
+where pc.case_id = cf.case_id
+and cf.folder_id = f.folder_id
+and pc.case_type_id = ct.case_type_id
+and pc.case_type_id = $P{param_case_type}
+and f.folder_parent_id = (select f2.folder_id from folder f2 where folder_screen_name = 'หลักฐานที่เคสลง')
+and date(pc.created_dttm) between $P{param_start_date} and $P{param_end_date}
+group by case_id) s1
+group by case_id
+) s2
+group by case_id
+) s3, patient_case pc, patient p, medical_procedure mp
+where s3.case_id = pc.case_id
+and pc.patient_id = p.patient_id
+and pc.procedure_id = mp.procedure_id
+order by mp.procedure_name, p.hn_no, pc.vn_no]]>
 	</queryString>
 	<field name="hn_no" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -350,8 +301,8 @@ ORDER BY
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="all_hn_no" class="java.lang.Long"/>
-	<field name="is_full" class="java.lang.Integer"/>
-	<field name="no_full" class="java.lang.Integer"/>
+	<field name="is_full" class="java.lang.Long"/>
+	<field name="no_full" class="java.lang.Long"/>
 	<variable name="all_hn_no_1" class="java.lang.Long" resetType="Page" calculation="Sum">
 		<variableExpression><![CDATA[$F{all_hn_no}]]></variableExpression>
 	</variable>
@@ -365,13 +316,13 @@ ORDER BY
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="314" splitType="Stretch">
+		<band height="316" splitType="Stretch">
 			<staticText>
 				<reportElement x="0" y="0" width="414" height="32" forecolor="#2B2B26" uuid="c2ae9407-b289-4f27-bf25-d38e3791a461"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="24" isBold="true"/>
 				</textElement>
-				<text><![CDATA[รายงานการลงรูปของเคส]]></text>
+				<text><![CDATA[รายงานการส่งรูปของเคส]]></text>
 			</staticText>
 			<line>
 				<reportElement x="0" y="31" width="500" height="1" backcolor="#74C4C6" uuid="d05a909a-e03a-45fb-97d5-3c0be64cc8fb"/>
@@ -380,7 +331,7 @@ ORDER BY
 				</graphicElement>
 			</line>
 			<textField evaluationTime="Page">
-				<reportElement x="0" y="41" width="555" height="20" uuid="7d76d551-fd53-4e36-81ab-4c07e0fc9142"/>
+				<reportElement x="0" y="40" width="555" height="20" uuid="7d76d551-fd53-4e36-81ab-4c07e0fc9142"/>
 				<textElement>
 					<font fontName="TH SarabunPSK" size="16"/>
 				</textElement>
@@ -419,7 +370,7 @@ ORDER BY
 					<keyExpression><![CDATA[$F{STATUS}]]></keyExpression>
 					<valueExpression><![CDATA[$F{total}]]></valueExpression>
 				</pieDataset>
-				<piePlot isShowLabels="true" isCircular="true" labelFormat="({2})" legendLabelFormat="{0}">
+				<piePlot isShowLabels="false" isCircular="true" labelFormat="({2})" legendLabelFormat="{0}">
 					<plot>
 						<seriesColor seriesOrder="0" color="#00B050"/>
 						<seriesColor seriesOrder="1" color="#C74366"/>
