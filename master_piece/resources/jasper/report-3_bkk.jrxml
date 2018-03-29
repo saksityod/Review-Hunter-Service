@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-3" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
-	<property name="ireport.zoom" value="1.6105100000000068"/>
-	<property name="ireport.x" value="220"/>
-	<property name="ireport.y" value="240"/>
+	<property name="ireport.zoom" value="1.6105100000000039"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="24"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -195,86 +195,6 @@
 			<pen lineWidth="0.5" lineColor="#FFFFFF"/>
 		</box>
 	</style>
-	<style name="table 9">
-		<box>
-			<pen lineWidth="1.0" lineColor="#000000"/>
-		</box>
-	</style>
-	<style name="table 9_TH" mode="Opaque" backcolor="#F0F8FF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-	</style>
-	<style name="table 9_CH" mode="Opaque" backcolor="#BFE1FF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-	</style>
-	<style name="table 9_TD" mode="Opaque" backcolor="#FFFFFF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-	</style>
-	<style name="table 10">
-		<box>
-			<pen lineWidth="1.0" lineColor="#000000"/>
-		</box>
-	</style>
-	<style name="table 10_TH" mode="Opaque" backcolor="#F0F8FF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-	</style>
-	<style name="table 10_CH" mode="Opaque" backcolor="#BFE1FF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-	</style>
-	<style name="table 10_TD" mode="Opaque" backcolor="#FFFFFF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-	</style>
-	<style name="table 11">
-		<box>
-			<pen lineWidth="1.0" lineColor="#000000"/>
-		</box>
-	</style>
-	<style name="table 11_TH" mode="Opaque" backcolor="#F0F8FF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-	</style>
-	<style name="table 11_CH" mode="Opaque" backcolor="#BFE1FF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-	</style>
-	<style name="table 11_TD" mode="Opaque" backcolor="#FFFFFF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-	</style>
-	<style name="table 12">
-		<box>
-			<pen lineWidth="1.0" lineColor="#000000"/>
-		</box>
-	</style>
-	<style name="table 12_TH" mode="Opaque" backcolor="#F0F8FF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-	</style>
-	<style name="table 12_CH" mode="Opaque" backcolor="#BFE1FF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-	</style>
-	<style name="table 12_TD" mode="Opaque" backcolor="#FFFFFF">
-		<box>
-			<pen lineWidth="0.5" lineColor="#000000"/>
-		</box>
-	</style>
 	<subDataset name="ChartPie" uuid="6fc527cf-8c93-462c-abc7-60268e352626">
 		<parameter name="param_doctor_id" class="java.lang.Integer"/>
 		<parameter name="param_start_date" class="java.lang.String"/>
@@ -318,65 +238,28 @@ and cs.actual_date between $P{param_start_date} and $P{param_end_date}]]>
 	<parameter name="param_start_date" class="java.lang.String"/>
 	<parameter name="param_end_date" class="java.lang.String"/>
 	<parameter name="param_doctor_id" class="java.lang.Integer"/>
-	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["C:\\Bitnami\\wampstack-5.6.32-1\\apache2\\htdocs\\master_piece\\resources\\jasper\\"]]></defaultValueExpression>
-	</parameter>
 	<queryString>
-		<![CDATA[select att.appointment_type_name,
-pt.patient_name,
-DATE_FORMAT(ca.appointment_date,'%d/%m/%Y %h.%i') AS appointment_date,
-ca.is_vdo_product,
-ca.is_picture_product,
-ca.is_vdo_rh,
-ca.is_picture_rh,
-dtt.doctor_name,
-count(*) as count1
-from case_appointment ca
-inner join appointment_type att on att.appointment_type_id = ca.appointment_type_id
-inner join patient_case pc on pc.case_id = ca.case_id
-inner join patient pt on pt.patient_id = pc.patient_id
-inner join doctor dtt on dtt.doctor_id = ca.doctor_id
-where ca.doctor_id = $P{param_doctor_id}
+		<![CDATA[select dr.doctor_name, at.appointment_type_name, count(*) as count1
+from case_appointment ca, appointment_type at, doctor dr
+where ca.appointment_type_id = at.appointment_type_id
+and ca.doctor_id = dr.doctor_id
+and ca.doctor_id = $P{param_doctor_id}
 and ca.appointment_date between $P{param_start_date} and $P{param_end_date}
-group by att.appointment_type_name,
-				pt.patient_name,
-				ca.appointment_date,
-				ca.is_vdo_product,
-				ca.is_picture_product,
-				ca.is_vdo_rh,
-				ca.is_picture_rh,
-				dtt.doctor_name]]>
+group by dr.doctor_name, at.appointment_type_name
+order by at.appointment_type_name]]>
 	</queryString>
-	<field name="appointment_type_name" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="patient_name" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="appointment_date" class="java.lang.String">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="is_vdo_product" class="java.lang.Integer">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="is_picture_product" class="java.lang.Integer">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="is_vdo_rh" class="java.lang.Integer">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
-	<field name="is_picture_rh" class="java.lang.Integer">
-		<fieldDescription><![CDATA[]]></fieldDescription>
-	</field>
 	<field name="doctor_name" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
+	<field name="appointment_type_name" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
 	<field name="count1" class="java.lang.Long"/>
-	<variable name="variable1" class="java.lang.Integer" calculation="Sum">
-		<variableExpression><![CDATA[$F{count1}]]></variableExpression>
-	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
 	<title>
-		<band height="101" splitType="Stretch">
+		<band height="79" splitType="Stretch">
 			<staticText>
 				<reportElement x="0" y="0" width="414" height="32" forecolor="#2B2B26" uuid="c2ae9407-b289-4f27-bf25-d38e3791a461"/>
 				<textElement verticalAlignment="Middle">
@@ -390,8 +273,15 @@ group by att.appointment_type_name,
 					<pen lineWidth="2.5" lineColor="#74C4C6"/>
 				</graphicElement>
 			</line>
+			<textField evaluationTime="Page">
+				<reportElement x="0" y="46" width="269" height="20" uuid="7d76d551-fd53-4e36-81ab-4c07e0fc9142"/>
+				<textElement>
+					<font fontName="TH SarabunPSK" size="16" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ชื่อแพทย์ :     "+$F{doctor_name}+"      จำนวนเคสที่นัด :      "+$F{count1}+" "]]></textFieldExpression>
+			</textField>
 			<componentElement>
-				<reportElement key="table 8" style="table 8" x="224" y="44" width="128" height="20" uuid="f18ce28f-69d0-4661-bf45-75dba09ac65e"/>
+				<reportElement key="table 8" style="table 8" x="269" y="45" width="128" height="20" uuid="f18ce28f-69d0-4661-bf45-75dba09ac65e"/>
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
 					<datasetRun subDataset="OR" uuid="8385d10d-4d85-4bce-b8cf-4607e91b8c7e">
 						<datasetParameter name="param_doctor_id">
@@ -417,7 +307,7 @@ group by att.appointment_type_name,
 							<staticText>
 								<reportElement x="0" y="0" width="59" height="20" uuid="837a48d7-69e4-4151-8ef8-19116973a5ff"/>
 								<textElement verticalAlignment="Middle">
-									<font fontName="TH SarabunPSK" size="16" isBold="false"/>
+									<font fontName="TH SarabunPSK" size="16"/>
 								</textElement>
 								<text><![CDATA[OR แล้ว :]]></text>
 							</staticText>
@@ -425,19 +315,59 @@ group by att.appointment_type_name,
 					</jr:column>
 				</jr:table>
 			</componentElement>
-			<textField evaluationTime="Page">
-				<reportElement x="0" y="45" width="224" height="20" uuid="7d76d551-fd53-4e36-81ab-4c07e0fc9142"/>
-				<textElement>
-					<font fontName="TH SarabunPSK" size="16" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["ชื่อแพทย์ :    "+$F{doctor_name}+"    จำนวนเคสที่นัด :    "+$V{variable1}+"       "]]></textFieldExpression>
-			</textField>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="108" splitType="Stretch">
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement style="table" mode="Opaque" x="0" y="0" width="180" height="23" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="eae04c99-8cfa-4991-85f5-4f5f313d3b7a"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ประเภทการนัดหมาย]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="table" mode="Opaque" x="180" y="0" width="89" height="23" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="f44aa2d4-a0f7-495a-820c-832c4fdf8237"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[จำนวน]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="table_TD" mode="Opaque" x="0" y="23" width="180" height="20" uuid="61c331cb-73a7-448f-a50e-f4b659cd9a46"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{appointment_type_name}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="table_TD" mode="Transparent" x="180" y="23" width="89" height="20" backcolor="#FFFFFF" uuid="5937fb02-172b-4b54-bfcc-581ebb8dcccd"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16"/>
+					<paragraph rightIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{count1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="175">
 			<crosstab>
-				<reportElement x="0" y="0" width="555" height="108" uuid="bc639e0b-0a53-4d18-996b-bb49626ce0e0"/>
+				<reportElement x="0" y="0" width="555" height="175" uuid="bc639e0b-0a53-4d18-996b-bb49626ce0e0"/>
 				<crosstabDataset>
 					<dataset>
 						<datasetRun subDataset="ChartPie" uuid="36b3a977-a0d6-4d8a-a197-0eb154d97589">
@@ -464,9 +394,9 @@ group by att.appointment_type_name,
 								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 							</box>
 							<textField>
-								<reportElement style="Crosstab Data Text" x="0" y="0" width="100" height="20" uuid="9ba1e95d-b531-4977-b5a9-596994ab1543"/>
+								<reportElement style="Crosstab Data Text" x="0" y="0" width="100" height="25" uuid="9ba1e95d-b531-4977-b5a9-596994ab1543"/>
 								<textElement verticalAlignment="Middle">
-									<font fontName="TH SarabunPSK" size="16" isBold="true"/>
+									<font fontName="TH SarabunPSK" size="16"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$V{procedure_name}]]></textFieldExpression>
 							</textField>
@@ -478,9 +408,9 @@ group by att.appointment_type_name,
 								<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 							</box>
 							<staticText>
-								<reportElement x="0" y="0" width="100" height="20" uuid="51a536dd-d01a-4570-8216-1565baf76faa"/>
+								<reportElement x="0" y="0" width="100" height="25" uuid="51a536dd-d01a-4570-8216-1565baf76faa"/>
 								<textElement textAlignment="Center" verticalAlignment="Middle">
-									<font fontName="TH SarabunPSK" size="16" isBold="true"/>
+									<font fontName="TH SarabunPSK" size="16"/>
 								</textElement>
 								<text><![CDATA[Total]]></text>
 							</staticText>
@@ -499,7 +429,7 @@ group by att.appointment_type_name,
 							<textField>
 								<reportElement style="Crosstab Data Text" x="0" y="0" width="65" height="39" uuid="dbb98736-6047-48d8-8f64-1c17cc176013"/>
 								<textElement verticalAlignment="Middle">
-									<font fontName="TH SarabunPSK" size="16" isBold="true"/>
+									<font fontName="TH SarabunPSK" size="16"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$V{case_type}]]></textFieldExpression>
 							</textField>
@@ -512,13 +442,13 @@ group by att.appointment_type_name,
 				<measure name="ccMeasure" class="java.lang.Integer" calculation="Count">
 					<measureExpression><![CDATA[$F{cc}]]></measureExpression>
 				</measure>
-				<crosstabCell width="65" height="20">
+				<crosstabCell width="65" height="25">
 					<cellContents>
 						<box>
 							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 						</box>
 						<textField>
-							<reportElement style="Crosstab Data Text" x="0" y="0" width="65" height="20" uuid="32626538-ce8a-42e5-bb13-d8e557b9f822"/>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="65" height="25" uuid="32626538-ce8a-42e5-bb13-d8e557b9f822"/>
 							<textElement textAlignment="Right" verticalAlignment="Middle">
 								<font fontName="TH SarabunPSK" size="16"/>
 								<paragraph rightIndent="10"/>
@@ -527,13 +457,13 @@ group by att.appointment_type_name,
 						</textField>
 					</cellContents>
 				</crosstabCell>
-				<crosstabCell width="65" height="20" rowTotalGroup="procedure_name">
+				<crosstabCell width="65" height="25" rowTotalGroup="procedure_name">
 					<cellContents backcolor="#BFE1FF" mode="Opaque">
 						<box>
 							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
 						</box>
 						<textField>
-							<reportElement style="Crosstab Data Text" x="0" y="0" width="65" height="20" uuid="b2af8c9d-9232-45e5-b693-f5b63cd770cb"/>
+							<reportElement style="Crosstab Data Text" x="0" y="0" width="65" height="25" uuid="b2af8c9d-9232-45e5-b693-f5b63cd770cb"/>
 							<textElement textAlignment="Right" verticalAlignment="Middle">
 								<font fontName="TH SarabunPSK" size="16"/>
 								<paragraph rightIndent="10"/>
@@ -566,209 +496,5 @@ group by att.appointment_type_name,
 				</crosstabCell>
 			</crosstab>
 		</band>
-	</pageHeader>
-	<columnHeader>
-		<band height="48">
-			<staticText>
-				<reportElement style="table_To" mode="Opaque" x="145" y="24" width="124" height="24" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="9a0a35a0-2262-4cca-8541-08bcfc2bf535"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="16" isBold="true"/>
-				</textElement>
-				<text><![CDATA[ชื่อเคส]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="table_To" mode="Opaque" x="269" y="24" width="126" height="24" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="3ad47d3b-0f9c-4e1b-88ae-8609fbc244cd"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="16" isBold="true"/>
-				</textElement>
-				<text><![CDATA[วัน/เวลา]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="table_To" mode="Opaque" x="395" y="24" width="40" height="24" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="83850660-5bb8-4d06-8734-770802632be1"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="16" isBold="true"/>
-				</textElement>
-				<text><![CDATA[VDO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="table_To" mode="Opaque" x="435" y="24" width="40" height="24" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="2652cfd8-9e2a-4365-91e5-d8b239d96a8c"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="16" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Picture]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="table_To" mode="Opaque" x="475" y="24" width="40" height="24" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="21210132-5876-4bb5-b297-e4791b91a6ab"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="16" isBold="true"/>
-				</textElement>
-				<text><![CDATA[VDO]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="table_To" mode="Opaque" x="515" y="24" width="40" height="24" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="e1fd426a-83d0-4a45-8ea8-3467bf2fdfd7"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="16" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Picture]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="table_To" mode="Opaque" x="395" y="0" width="80" height="24" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="148aa5b1-abed-45c7-8c6b-ff0fde6a9a6e"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="16" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Production]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="table_To" mode="Opaque" x="0" y="24" width="146" height="24" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="13d79ebd-f36b-4ee8-a064-2f1266d24e3d"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="16" isBold="true"/>
-				</textElement>
-				<text><![CDATA[ประเภทการนัดหมาย]]></text>
-			</staticText>
-			<staticText>
-				<reportElement style="table_To" mode="Opaque" x="475" y="0" width="80" height="24" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="60e04c16-7c6c-429c-9efa-004d5f653042"/>
-				<box>
-					<pen lineWidth="0.25"/>
-					<topPen lineWidth="0.25"/>
-					<leftPen lineWidth="0.25"/>
-					<bottomPen lineWidth="0.25"/>
-					<rightPen lineWidth="0.25"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="16" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Review Hunter]]></text>
-			</staticText>
-		</band>
 	</columnHeader>
-	<detail>
-		<band height="20">
-			<textField>
-				<reportElement style="table_TD" mode="Transparent" x="0" y="0" width="146" height="20" backcolor="#FFFFFF" uuid="aa761884-9c38-4395-aee3-90bee56de2d8"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="16"/>
-					<paragraph rightIndent="5"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{appointment_type_name}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="table_TD" mode="Transparent" x="146" y="0" width="123" height="20" backcolor="#FFFFFF" uuid="5d8788f3-2a7c-4e30-8a93-a893091eca8d"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="16"/>
-					<paragraph rightIndent="5"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{patient_name}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="table_TD" mode="Transparent" x="269" y="0" width="126" height="20" backcolor="#FFFFFF" uuid="d50aaf18-bdaf-4cec-a712-bd173aa5db62"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="16"/>
-					<paragraph rightIndent="5"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{appointment_date}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="table_TD" mode="Transparent" x="395" y="0" width="40" height="20" backcolor="#FFFFFF" uuid="3764c16e-76c4-434e-b167-8fa8cfe532aa"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="16"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{is_vdo_product}==1? "Y":""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="table_TD" mode="Transparent" x="435" y="0" width="40" height="20" backcolor="#FFFFFF" uuid="3b41c3f2-a6c8-4663-8ca5-1098eebf4101"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="16"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{is_picture_product}==1? "Y":""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="table_TD" mode="Transparent" x="475" y="0" width="40" height="20" backcolor="#FFFFFF" uuid="6f3679a4-a64f-4af3-8e63-779dec0e5b10"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="16"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{is_vdo_rh}==1? "Y":""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement style="table_TD" mode="Transparent" x="515" y="0" width="40" height="20" backcolor="#FFFFFF" uuid="5cef52c5-97eb-4190-b49d-8aeec076c642"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="16"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{is_picture_rh}==1? "Y":""]]></textFieldExpression>
-			</textField>
-		</band>
-	</detail>
-	<lastPageFooter>
-		<band height="50">
-			<textField>
-				<reportElement x="403" y="30" width="128" height="20" uuid="006cdd86-cb3c-4817-9cba-61b9607285c8"/>
-				<textElement textAlignment="Right">
-					<font fontName="TH SarabunPSK" size="14"/>
-				</textElement>
-				<textFieldExpression><![CDATA["หน้าที่ "+$V{PAGE_NUMBER}+" /"]]></textFieldExpression>
-			</textField>
-			<textField evaluationTime="Report">
-				<reportElement x="531" y="30" width="24" height="20" uuid="99fb1296-2361-46fe-8738-7d5dca1033a7"/>
-				<textElement>
-					<font fontName="TH SarabunPSK" size="14"/>
-				</textElement>
-				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
-			</textField>
-		</band>
-	</lastPageFooter>
 </jasperReport>

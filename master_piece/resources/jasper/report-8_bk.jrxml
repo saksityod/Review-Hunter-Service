@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-8" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
 	<property name="ireport.zoom" value="1.7715610000000044"/>
-	<property name="ireport.x" value="56"/>
-	<property name="ireport.y" value="536"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="296"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -106,9 +106,6 @@ order by mp.procedure_name, p.hn_no, pc.vn_no]]>
 	<variable name="totall_2" class="java.lang.Long" calculation="Sum">
 		<variableExpression><![CDATA[$F{totall}]]></variableExpression>
 	</variable>
-	<variable name="year_thai" class="java.lang.Integer">
-		<variableExpression><![CDATA[$P{param_year}+543]]></variableExpression>
-	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -132,7 +129,7 @@ order by mp.procedure_name, p.hn_no, pc.vn_no]]>
 				<textElement>
 					<font fontName="TH SarabunPSK" size="16"/>
 				</textElement>
-				<textFieldExpression><![CDATA["เคส :     "+ $P{param_case_name} +"      ปี :      "+$V{year_thai}+"      จำนวน :      "+$V{totall_2}+"      หัตถการ"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["เคส :     "+ $P{param_case_name} +"      ปี :      "+$P{param_year}+"      จำนวน :      "+$V{totall_2}+"      หัตถการ"]]></textFieldExpression>
 			</textField>
 			<pieChart>
 				<chart>

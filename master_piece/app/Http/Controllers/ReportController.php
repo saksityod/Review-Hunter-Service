@@ -34,8 +34,9 @@ class ReportController extends Controller
 	public function case_list_year(Request $request)
 	{
 		$items = DB::select("
-			SELECT distinct(EXTRACT(YEAR FROM created_dttm)) 
+			SELECT YEAR(created_dttm) as year1, YEAR(created_dttm) + 543 as year2
 			FROM patient_case
+			group by year1
 		");
 		return response()->json($items);
 	}
