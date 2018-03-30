@@ -124,7 +124,7 @@ Route::group(['middleware' => 'cors'], function()
 		Route::post('updateFolder'	,'BaController@updateFolder');
 		Route::post('destoryFolder'	,'BAController@destoryFolder');
 		Route::post('cu'			,'BaController@cu');
-		Route::post('cu_contract'	,'BaController@cu_contract');
+		Route::post('cuFollowup'	,'BaController@cu_followup');
 		Route::post('makeDirectory'	,'BaController@make_directory');
 		Route::post('deleteFile'	,'BaController@delete_file');
 		Route::post('delRec'		,'BaController@del_rec');

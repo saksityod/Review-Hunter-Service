@@ -98,40 +98,36 @@ class BAController extends Controller {
 
     public function destoryFolder(Request $req){
         try {
-            $case = PatientCase::select('case_id','patient_id')->where('case_id',$req->case_id)->first();        
-            $folder = Folder::where('folder_id',$req->folder_id)->first();
-            if($folder->parentFolder){
-                if($folder->is_template !=1){
-                    $path = public_path().'/uploads/ba/'.$case->patient_id.'/'.$case->case_id.'/file/'.$folder->parentFolder->folder_name.'/'.$folder->folder_name;
-                    $folder->caseFolder()->delete();
-                    if($folder->caseFile) $folder->caseFile()->delete();
-                    File::deleteDirectory($path);
-                    $folder->delete();
-                    return response()->json(['status' => 200]);
-                }else{
-                    return response()->json(['status' => 400,'message'=>'ไม่สามารถลบแฟ้มข้อมูลต้นฉบับได้']);
-                }
-            }else{
-                if($folder->is_template !=1){
-                    if($folder->subFolder){
-                        foreach ($folder->subFolder as $sub) {
-                            if($sub->caseFolder)   $sub->caseFolder()->delete();
-                            if($sub->caseFile)     $sub->caseFile()->delete();
-                            File::deleteDirectory(public_path().'/uploads/ba/'.$case->patient_id.'/'.$case->case_id.'/file/'.$sub->parentFolder->folder_name.'/'.$sub->folder_name);
-                            $sub->delete();
-                        }
-                    }
-                    $folder->caseFolder()->delete();
-                    if($folder->caseFile) $folder->caseFile()->delete();
-                    $folder->delete();
-                    File::deleteDirectory(public_path().'/uploads/ba/'.$case->patient_id.'/'.$case->case_id.'/file/'.$folder->folder_name);
-                    return response()->json(['status' => 200]);
-                    
-                }else{
-                    return response()->json(['status' => 400,'message'=>'ไม่สามารถลบแฟ้มข้อมูลต้นฉบับได้']);
-                }
-            }
 
+            $case_id    = $req->case_id;
+            $folder_id  = $req->folder_id;
+
+            $case = PatientCase::select('case_id','patient_id')->where('case_id',$case_id)->first();        
+            $folder = Folder::where('folder_id',$folder_id)->first();
+
+            // child folder
+            if($folder->parentFolder){
+                $path = public_path().'/uploads/ba/'.$case->patient_id.'/'.$case->case_id.'/file/'.$folder->parentFolder->folder_name.'/'.$folder->folder_name;
+                $folder->caseFolder()->delete();
+                if($folder->caseFile) $folder->caseFile()->delete();
+                File::deleteDirectory($path);
+                if($folder->is_template !=1)    $folder->delete();
+            }else{
+                // parent folder
+                if($folder->subFolder){
+                    foreach ($folder->subFolder as $sub) {
+                        if($sub->caseFolder)   $sub->caseFolder()->delete();
+                        if($sub->caseFile)     $sub->caseFile()->delete();
+                        File::deleteDirectory(public_path().'/uploads/ba/'.$case->patient_id.'/'.$case->case_id.'/file/'.$sub->parentFolder->folder_name.'/'.$sub->folder_name);
+                        if($sub->is_template !=1) $sub->delete();
+                    }
+                }
+                $folder->caseFolder()->delete();
+                if($folder->caseFile) $folder->caseFile()->delete();
+                File::deleteDirectory(public_path().'/uploads/ba/'.$case->patient_id.'/'.$case->case_id.'/file/'.$folder->folder_name);
+                if($folder->is_template !=1)    $folder->delete();
+            }
+            return response()->json(['status' => 200,'message'=>'สำเร็จ!! ลบแฟ้มแล้ว.']);
         } catch (Exception $e) {
             return response()->json(['status' => 400,'message'=>'เกิดข้อผิดพลาด!! ไม่สามารถลบแฟ้มได้.','error'=>$e]);
         }
@@ -277,6 +273,33 @@ class BAController extends Controller {
         return $data;
     }
 
+    public function cu_followup(Request $req){
+        try {
+            $case_id = $req->case_id;
+            $followups = $req->case_followup;
+            foreach ($followups as $followup) {
+                if($followup['followup_id'] !=''){
+                    $fu = CaseFollowUp::findOrFail($followup['followup_id']);
+                    $fu->procedure_id    = $followup['procedure_id'];
+                    $fu->followup_year  = $followup['followup_year'];
+                    $fu->updated_by     = Auth::id();
+                    $fu->save();
+                }else{
+                    $fu = new CaseFollowUp();
+                    $fu->case_id        = $followup['case_id'];
+                    $fu->procedure_id    = $followup['procedure_id'];
+                    $fu->followup_year  = $followup['followup_year'];
+                    $fu->updated_by     = Auth::id();
+                    $fu->save();
+                }
+            }
+            $data = CaseFollowUp::where('case_id',$case_id)->get();
+            return response()->json(['status'=>200,'data'=>$data]);
+        } catch (Exception $e) {
+            return response()->json(['status' => 400, 'errors' =>  $e]);
+        }
+    }
+
     public function get_oneCase(Request $req){
         $case_id = $req->case_id;
         $data = PatientCase::where('case_id',$case_id)
@@ -318,18 +341,19 @@ class BAController extends Controller {
             }
         }
 
-        // foreach ($folder as $fi => $f) {
-        //     foreach ($f as $sfi => $sf) {
-        //         if(sizeof($sf) == 0){
-        //             unset($sf);
-        //         }
-        //     }
-        //     if(sizeof($f->subFolder)>0){
-        //     }else{
-        //          unset($f);
-        //     }
-        // }
-        // return $folder; 
+        foreach ($folder as $fi => $f) {
+            if(sizeof($f->subFolder) > 0){
+                foreach ($f->subFolder as $sfi => $sf) {
+                    if(sizeof($sf->caseFile) == 0){
+                        unset($f->subFolder[$sfi]);
+                    }
+                }
+            }
+            if(sizeof($f->subFolder) == 0 && sizeof($f->caseFile) == 0){
+                 unset($folder[$fi]);
+            }
+        }
+        return $folder; 
     }
 
     public function get_case_file(Request $req){
@@ -405,15 +429,16 @@ class BAController extends Controller {
 
     public function del_rec(Request $req) {
         try {
+            // return $req->all();
             $method = $req->method;
-            if($method == 'patient_social_media')$model = PatientSocialMedia::find($req->id)->delete();
-            if($method == 'surgery_history')    $model = SurgeryHistory::find($req->id)->delete();
-            if($method == 'case_followup')      $model = CaseFollowUp::find($req->id)->delete();
-            if($method == 'case_price')         $model = CasePrice::find($req->id)->delete();
-            if($method == 'case_social_media')  $model = caseSocialMedia::find($req->id)->delete();
-            if($method == 'case_coordinate')    $model = CaseCoordinate::find($req->id)->delete();
-            if($method == 'case_appointment')   $model = CaseAppointment::find($req->id)->delete();
-            if($method == 'case_pr')            $model = CasePR::find($req->id)->delete();
+            if($method == 'patient_social_media')   PatientSocialMedia::find($req->id)->delete();
+            if($method == 'surgery_history')        SurgeryHistory::find($req->id)->delete();
+            if($method == 'case_followup')          CaseFollowUp::find($req->id)->delete();
+            if($method == 'case_price')             CasePrice::find($req->id)->delete();
+            if($method == 'case_social_media')      CaseSocialMedia::find($req->id)->delete();
+            if($method == 'case_coordinate')        CaseCoordinate::find($req->id)->delete();
+            if($method == 'case_appointment')       CaseAppointment::find($req->id)->delete();
+            if($method == 'case_pr')                CasePR::find($req->id)->delete();
 
             if($method == 'case_contract'){
                 $model = CaseContract::find($req->id);
@@ -433,7 +458,7 @@ class BAController extends Controller {
                     return response()->json(['status'=>200]);
                 }              
             }
-        return response()->json(['status' => 400]);
+            return response()->json(['status' => 200]);
         }catch (Exception $e) {
             return response()->json(['status' => 400, 'errors' =>  $e]);
         }
