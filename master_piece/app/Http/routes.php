@@ -181,6 +181,8 @@ Route::group(['middleware' => 'cors'], function()
 
 	  	Route::get('list_to_user','WriterController@list_to_user');
 	  	Route::get('list_article_code','WriterController@list_article_code');
+
+	  	Route::post('del_doc_file','WriterController@del_doc_file');
  	});
 	
 	//Report

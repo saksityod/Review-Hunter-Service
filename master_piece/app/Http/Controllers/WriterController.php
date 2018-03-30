@@ -1072,4 +1072,27 @@ class WriterController extends Controller {
         ");
         return response()->json($items);
     }
+
+    public function del_doc_file(Request $req) {
+        try {
+            $item = ArticleDoc::findOrFail($req->article_doc_id);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['status' => 404, 'data' => 'ArticleDoc not found.']);
+        }   
+
+        try {
+            $item->delete();
+            $items = DB::select("
+                select article_path as doc_file, article_doc_id from article_doc
+                where article_id = {$req->article_id}
+            ");
+        } catch (Exception $e) {
+            if ($e->errorInfo[1] == 1451) {
+                return response()->json(['status' => 400, 'data' => 'ไม่สามารถลบได้ เนื่องจากมีการใช้งานอยู่']);
+            } else {
+                return response()->json($e->errorInfo);
+            }
+        }
+        return response()->json(['status' => 200, 'article' => $items]);
+    }
 }
