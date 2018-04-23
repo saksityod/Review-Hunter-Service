@@ -37,6 +37,9 @@ class PatientCase extends Model
     }
 
     /*  */
+    public function caseFolder(){
+        return $this->hasMany('App\CaseFolder','case_id','case_id');
+    }
     public function caseType(){
         return $this->hasOne('App\CaseType','case_type_id','case_type_id');
     }

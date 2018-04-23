@@ -8,6 +8,9 @@ use App\CaseStage;
 use App\ArticleStage;
 use App\ArticleStageDoc;
 use App\ArticleStageAlert;
+use App\SocialMedia;
+use App\CaseSocialMedia;
+use App\ArticleSocialMedia;
 
 use Illuminate\Http\Request;
 use DB;
@@ -328,9 +331,27 @@ class WriterController extends Controller {
         );
         if($validator_article->fails()){$errors_validator[] = $validator_article->errors();}
 
+        if(!empty($request['social_media'])) {
+            foreach($request['social_media'] as $social) {
+                // return response()->json($social);
+                $validator_social_media = Validator::make([
+                    'social_media_id'           => $social->social_media_id,
+                    'user_link'                 => $social->user_link,
+                ], [
+                    'social_media_id'           => 'required',
+                    'user_link'                 => 'required|max:255',
+                ],[ 'social_media_id.required'  => 'ช่องทางลงสื่อ : กรุณาเลือก ประเภทสื่อ.',
+                    'user_link.required'        => 'ช่องทางลงสื่อ : กรุณากรอก บัญชีผู้ใช้งาน/ลิ้งค์.',
+                ]);
+                // return response()->json($validator_social_media);
+            }
+            if($validator_social_media->fails()){$errors_validator[] = $validator_social_media->errors();}
+        }
+
         if(!empty($errors_validator)) {
             return response()->json(['status' => 400, 'errors' => $errors_validator]);
         }
+        // return response()->json($request['social_media']);
 
         if(empty($request['article_id'])) {
             //add
@@ -367,14 +388,11 @@ class WriterController extends Controller {
                 if (!File::exists($path_folder)) {
                     $this->makeDirectory($path_folder, 0777, true, true); // create folder
                 }
-
                 foreach ($filesdata->file() as $key => $f) {
                     $keye = explode('-', $key);
                     if($keye[0]=='article_doc') {
-
                         $fileName = iconv('UTF-8','windows-874',$f->getClientOriginalName());
                         $f->move($path_folder, $fileName);
-
                         $article_doc = new ArticleDoc;
                         $article_doc->article_path = $f->getClientOriginalName();
                         $article_doc->article_id = $current_article_id;
@@ -384,6 +402,29 @@ class WriterController extends Controller {
                         } catch (Exception $e) {
                             $errors[] = [
                                 "table_name" => "article_doc",
+                                "errors" => $e
+                            ];
+                        }
+                    }
+                }
+            }
+
+            if(!empty($request['social_media'])) {
+                foreach($request['social_media'] as $s) {
+                    if (!$s->article_social_media_id) {
+                        $article_social_media = new ArticleSocialMedia;
+                        $article_social_media->article_id       = $article->article_id;
+                        $article_social_media->social_media_id  = $s->social_media_id;
+                        $article_social_media->user_link        = $s->user_link;
+                        $article_social_media->n_of_follwer     = $s->n_of_follower;
+                        $article_social_media->created_by = Auth::id();
+                        $article_social_media->updated_by = Auth::id();
+                        try {
+                        // return response()->json($article_social_media); 
+                            $article_social_media->save();
+                        } catch (Exception $e) {
+                            $errors[] = [
+                                "table_name" => "article_social_media",
                                 "errors" => $e
                             ];
                         }
@@ -555,6 +596,36 @@ class WriterController extends Controller {
                             ];
                         }
                     }
+                }
+            }
+
+            if(!empty($request['social_media'])) {
+                foreach($request['social_media'] as $s) {
+                    if ($s->article_social_media_id) {
+                        $article_social_media                   = ArticleSocialMedia::findOrFail($s->article_social_media_id);
+                        $article_social_media->article_id       = $article->article_id;
+                        $article_social_media->social_media_id  = $s->social_media_id;
+                        $article_social_media->user_link        = $s->user_link;
+                        $article_social_media->n_of_follwer     = $s->n_of_follower;
+                        $article_social_media->updated_by = Auth::id();
+                        
+                    }else{
+                        $article_social_media                   = new ArticleSocialMedia;
+                        $article_social_media->article_id       = $article->article_id;
+                        $article_social_media->social_media_id  = $s->social_media_id;
+                        $article_social_media->user_link        = $s->user_link;
+                        $article_social_media->n_of_follwer     = $s->n_of_follower;
+                        $article_social_media->created_by = Auth::id();
+                        $article_social_media->updated_by = Auth::id();
+                    }
+                    try {
+                            $article_social_media->save();
+                        } catch (Exception $e) {
+                            $errors[] = [
+                                "table_name" => "article_social_media",
+                                "errors" => $e
+                            ];
+                        }
                 }
             }
 
@@ -769,6 +840,15 @@ class WriterController extends Controller {
     //     return response()->json($result);
         
     // }
+
+    public function del_rec(Request $req) {
+        try {
+            ArticleSocialMedia::findOrFail($req->id)->delete();
+            return response()->json(['status' => 200]);
+        }catch (Exception $e) {
+            return response()->json(['status' => 400, 'errors' =>  $e]);
+        }
+    }
     
     public function upload_article(Request $request)
     {
@@ -965,13 +1045,16 @@ class WriterController extends Controller {
 
     public function show(Request $request)
     {
+
         $article = DB::select("
-            SELECT a.article_id, a.article_code, a.article_name, a_t.article_type_id, m.procedure_id, m.procedure_name,
-            d.doctor_id, d.doctor_name, u.screenName writer_name, u.userId writer_id, a.writing_start_date, a.writing_end_date,
-            a.plan_date, a.article_path, a.status, 
+            select a.article_id, a.article_code, a.article_name, CONCAT(a.article_path,a.article_id,'/',a_d.article_path) as doc_path, a_t.article_type_id, m.procedure_id, m.procedure_name,
+            d.doctor_id, a_d.article_doc_id, a_d.article_path as doc_file, d.doctor_name, u.screenName writer_name, u.userId writer_id, a.writing_start_date, a.writing_end_date,
+            a.plan_date, a.status, 
             s.article_stage_id, s.from_stage_id, fs.stage_name from_stage_name, s.to_stage_id, ts.stage_name to_stage_name,
             s.to_user_id, tu.screenName to_user_name, s.plan_date workflow_plan_date, s.actual_date workflow_actual_date, s.remark
             from article a
+            left outer join article_doc a_d
+            on a_d.article_id = a.article_id
             left outer join article_type a_t
             on a.article_type_id = a_t.article_type_id
             left outer join medical_procedure m 
@@ -1001,10 +1084,11 @@ class WriterController extends Controller {
             ", array($a->article_stage_id));
             $a->alerts = $alerts;
         }
+        $social = ArticleSocialMedia::where('article_id',$request->article_id)->get();
 
         $article_history = $this->article_stage_history($request->article_id);
         
-        return response()->json(['article' => $article, 'article_history' => $article_history]);
+        return response()->json(['social' => $social,'article' => $article, 'article_history' => $article_history]);
     }
 
     public function article_stage_history($article_id)
@@ -1094,5 +1178,22 @@ class WriterController extends Controller {
             }
         }
         return response()->json(['status' => 200, 'article' => $items]);
+    }
+
+    // public function destroy_case_social_media(Request $req){
+    //     try {
+    //         $arr = json_decode($req->arr);
+    //         foreach ($arr as $edu) {
+    //             CaseSocialMedia::find($edu)->delete();
+    //         } 
+    //         return response()->json(['status' => 200, 'data' => $req->arr]);
+    //     }catch (ModelNotFoundException $e) {
+    //         return response()->json(['status' => 404, 'data' => 'Can\'t not Destory.']);
+    //     }
+    // }
+
+    public function get_social_media(Request $request) {
+        $data = SocialMedia::where('is_active',1)->get(['social_media_id','social_media_name']);
+        return response()->json(['status'=>200,'articleSocialMedia'=>$data]);
     }
 }

@@ -105,7 +105,7 @@ Route::group(['middleware' => 'cors'], function()
 		Route::get('getCaseFolder/{case_id}','BAController@get_case_folder');
 		Route::get('getOnLoad'		,'BAController@get_dataOnload');
 		Route::get('getUser'		,'BAController@get_user');
-		Route::get('getSupervisedUser'		,'BAController@get_supervised_user');
+		Route::get('getSupervisedUser'	,'BAController@get_supervised_user');
 		Route::get('getProvince'	,'BAController@get_province');
 		Route::get('getAmphur'		,'BAController@get_amphur');
 		Route::get('getDistrict'	,'BAController@get_district');
@@ -129,6 +129,8 @@ Route::group(['middleware' => 'cors'], function()
 		Route::post('deleteFile'	,'BaController@delete_file');
 		Route::post('delRec'		,'BaController@del_rec');
 		Route::post('importFile'	,'BaController@import_file');
+
+		Route::get('mailAlertTime'	,'BaController@mail_alert_time');
 
 		//ba
 		 Route::post('destroy_social_media','BAController@destroy_social_media');
@@ -169,6 +171,7 @@ Route::group(['middleware' => 'cors'], function()
 	  	Route::get('list_user_alert','WriterController@list_user_alert');
 	  	Route::get('search_writer','WriterController@search_writer');
 	  	Route::post('cu','WriterController@cu');
+	  	Route::post('delRec','WriterController@del_rec');
 	  	Route::post('import/{id}','WriterController@import');
 	  	Route::get('download_article_stage_doc/{id}','WriterController@download_article_stage_doc');
 	  	Route::get('download_article_doc/{id}','WriterController@download_article_doc');
@@ -181,8 +184,10 @@ Route::group(['middleware' => 'cors'], function()
 
 	  	Route::get('list_to_user','WriterController@list_to_user');
 	  	Route::get('list_article_code','WriterController@list_article_code');
+	  	Route::get('getSocialMedia','WriterController@get_social_media');
 
 	  	Route::post('del_doc_file','WriterController@del_doc_file');
+	  	//Route::post('destroy_case_social_media','WriterController@destroy_social_media');
  	});
 	
 	//Report

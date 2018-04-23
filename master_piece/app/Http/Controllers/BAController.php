@@ -41,6 +41,8 @@ use App\WorkflowStage;
 use App\CaseFile;
 use App\CaseFolder;
 use App\User;
+use App\UserRole;
+use App\MailAlertTime;
 
 use ZipArchive;
 use Mail;
@@ -62,7 +64,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class BAController extends Controller {
     
     public function __construct() {
-        $this->middleware('jwt.auth',['except' => ['download_case_stage_doc']]);
+        $this->middleware('jwt.auth',['except' => ['download_case_stage_doc','mail_alert_time']]);
     }
 
     public function get_dataOnload(Request $req){
@@ -133,11 +135,73 @@ class BAController extends Controller {
         }
     }
 
+    public function mail_alert_time(){
+        try {
+            $num_date = MailAlertTime::lists('alert_time');
+            if($num_date){
+                $today = date('Y-m-d');
+                $send_date = [];
+                foreach ($num_date as $date) {
+                    array_push($send_date, date('Y-m-d', strtotime($today.'-'.$date.' days')));
+                }
+                // $caseFolders = caseFolder::whereNOTNULL('date_of_pass')
+                //                 ->where('is_pass',1)
+                //                 ->whereIn('date_of_pass',$send_date)
+                //                 ->with(['patientCase','folder','patientCase.patient','patientCase.procedure'])
+                //         ->orderby('case_id','asc')
+                //         ->get(['case_id','folder_id','date_of_pass']);
+
+                $cases = PatientCase::with(['caseFolder'=>function($qry) use ($send_date){
+                                $qry->whereNOTNULL('date_of_pass');
+                                $qry->where('is_pass',1);
+                                $qry->whereIn('date_of_pass',$send_date);
+                            },'caseFolder.folder','patient','procedure'])
+                        ->whereHas('caseFolder',function($qry) use ($send_date){
+                                $qry->whereNOTNULL('date_of_pass');
+                                $qry->where('is_pass',1);
+                                $qry->whereIn('date_of_pass',$send_date);
+                            })
+                        ->get();
+                // return $cases;
+                if($cases){
+                    // $to = UserRole::where('roleId',22307)->with('user')->get()->lists('user.emailAddress');
+                    $from = 'gjtestmail2017@gmail.com';
+                    $to = ['work.zaimon@gmail.com'];
+
+                    foreach($cases as $case) {
+                        $temp_arr = [];
+                        foreach($case->caseFolder as $cf) {
+                            array_push($temp_arr,$cf->folder->folder_screen_name);
+                        }
+                        $data = [   
+                            "patient_name"      => $case->patient->patient_name,
+                            "procedure_name"    => $case->procedure->procedure_name,
+                            "hn_no"             => $case->patient->hn_no,
+                            "vn_no"             => $case->vn_no,
+                            "folder_screen_name"=> $temp_arr
+                        ];
+
+                        Mail::send('emails.mail_alert_time', $data, function($message) use ($from, $to) {
+                            $message->from($from, 'Review Hunter');
+                            $message->to($to)->subject('แจ้งเตือน ระบบ Review Hunter รูปภาพสำหรับเขียนรีวิวพร้อมแล้ว');
+                        });
+                    }
+                }else{
+                    return response()->json(['status' => 200,'message'=>'Don\'t have data']);
+                }
+            }else{
+                return response()->json(['status' => 200,'message'=>'Don\'t have alert time']);
+            }
+            return response()->json(['status' => 200,'message'=>'Send Email Success']);
+        } catch (Exception $e) {
+            return response()->json(['status' => 400,'message'=>'Error']);
+        }
+    }
+
     public function updateFolder(Request $req){
         try {
             
             if(isset($req->folder_name)){ 
-                // return $req->all();
                 $folder = Folder::findOrFail($req->folder_id);
                 if($folder->is_template == 0){
                     $folder->folder_name = $req->folder_name;
@@ -151,7 +215,14 @@ class BAController extends Controller {
                 $data = [];
                 if(isset($req->is_active))    $case_folder->is_active = $req->is_active;
                 if(isset($req->is_open))      $case_folder->is_open   = $req->is_open;
-                if(isset($req->is_pass))      $case_folder->is_pass   = $req->is_pass;
+                if(isset($req->is_pass)){
+                    $case_folder->is_pass       = $req->is_pass;
+                    if($req->is_pass == 0){
+                        $case_folder->date_of_pass  = null;
+                    }else{
+                        $case_folder->date_of_pass  = date('Y-m-d');
+                    }
+                }
                 $case_folder->save();
                 return response()->json(['status' => 200,'data'=>$case_folder->folder->folder_name]);    
             }
@@ -162,12 +233,11 @@ class BAController extends Controller {
 
     public function get_folderSummary(Request $req){
         try {
-            $parent = Folder::findOrFail($req->folder_id);
+            $parent = Folder::find($req->folder_id);
             if($parent->parentFolder){
-                $parent = Folder::findOrFail($parent->parentFolder->folder_id);
+                $parent = Folder::find($parent->parentFolder->folder_id);
             }
             
-            // return response()->json($parent->caseFolder);
             $rs =  DB::select(' SELECT  (   
                                             SELECT COUNT(CS.is_pass)
                                             FROM folder FL
@@ -188,8 +258,8 @@ class BAController extends Controller {
                                             GROUP BY FL.folder_parent_id DESC
                                         ) as f_all
                                 FROM folder
-                                GROUP BY f_pass',[$parent->folder_id,$parent->caseFolder->case_id,
-                                                        $parent->folder_id,$parent->caseFolder->case_id]);
+                                GROUP BY f_pass',[  $parent->folder_id,$req->case_id,
+                                                    $parent->folder_id,$req->case_id]);
             return response()->json(['status'=>200,'data'=>$rs]);
         } catch (Exception $e) {
             return response()->json(['status'=>400,'error'=>$e]);
@@ -282,6 +352,7 @@ class BAController extends Controller {
                     $fu = CaseFollowUp::findOrFail($followup['followup_id']);
                     $fu->procedure_id    = $followup['procedure_id'];
                     $fu->followup_year  = $followup['followup_year'];
+                    $fu->remark = $followup['remark'];
                     $fu->updated_by     = Auth::id();
                     $fu->save();
                 }else{
@@ -289,6 +360,7 @@ class BAController extends Controller {
                     $fu->case_id        = $followup['case_id'];
                     $fu->procedure_id    = $followup['procedure_id'];
                     $fu->followup_year  = $followup['followup_year'];
+                    $fu->remark = $followup['remark'];
                     $fu->updated_by     = Auth::id();
                     $fu->save();
                 }
@@ -465,11 +537,22 @@ class BAController extends Controller {
     }
 
     public function get_user(Request $req){
-        $supervised = explode('|',$req->user);
-        array_shift($supervised);
-        return db::table('lportal.user_')->select('userId','screenName','firstName','lastName')
-                    ->whereNotIn('userId',$supervised)
-                    ->where('firstName', 'like','%'.$req->search.'%')->get();
+        try {
+            $supervised = explode('|',$req->user);
+            array_shift($supervised);
+            $myQry = User::query();
+            $myQry = $myQry->whereNotIn('userId',$supervised)->where('firstName', 'like','%'.$req->search.'%');
+            if($req->method == 'admin') {
+                $myQry = $myQry->where(function($qry) {
+                    $qry->where('userId',24093);    /* rhadmin  */
+                    $qry->orWhere('userId',24084);  /* rhco     */
+                    $qry->orWhere('userId',24057);  /* rhmgr    */
+                });
+            }
+            return $myQry->get(['userId','screenName','firstName','lastName']);
+        }catch (Exception $e) {
+            return response()->json(['status' => 400, 'errors' =>  $e]);
+        }
     }
 
     public function get_supervised_user(Request $req){
@@ -872,10 +955,10 @@ class BAController extends Controller {
             ],[
                 'patient_name.required' => 'ข้อมูลส่วนตัว : กรุณากรอก ชื่อคนไข้.',
                 'patient_name.max'      => 'ข้อมูลส่วนตัว : ชื่อคนไข้ ยาวเกินกำหนด.',
-                'birthday.required'              => 'ข้อมูลส่วนตัว : กรุณากรอก วันเกิด.',
-                'nationality_id.required'        => 'ข้อมูลส่วนตัว : กรุณาเลือก สัญชาติ.',
-                'home_no.required'               => 'ข้อมูลส่วนตัว : กรุณากรอก เลขที่อยู่.',
-                'gender.required'                => 'ข้อมูลส่วนตัว : กรุณาเลือก เพศ.',
+                'birthday.required'     => 'ข้อมูลส่วนตัว : กรุณากรอก วันเกิด.',
+                'nationality_id.required'=> 'ข้อมูลส่วนตัว : กรุณาเลือก สัญชาติ.',
+                'home_no.required'      => 'ข้อมูลส่วนตัว : กรุณากรอก เลขที่อยู่.',
+                'gender.required'       => 'ข้อมูลส่วนตัว : กรุณาเลือก เพศ.',
                 'id_card.required'      => 'ข้อมูลส่วนตัว : กรุณากรอก รหัสประจำตัวประชาชน.',
                 'id_card.max'           => 'ข้อมูลส่วนตัว : รหัสประจำตัวประชาชน ยาวเกินกำหนด 13 หลัก.',
                 'mobile_no.required'    => 'ข้อมูลส่วนตัว : กรุณากรอก เบอร์โทรศัพท์มือถือ.',
@@ -891,10 +974,10 @@ class BAController extends Controller {
                     $validator_social_media = Validator::make($row, [
                         'social_media_id'           => 'required',
                         'user_link'                 => 'required|max:256',
-                        'n_of_follwer'              => 'required|integer',
+                        // 'n_of_follwer'              => 'required|integer',
                     ],[ 'social_media_id.required'  => 'ข้อมูล Social Network : กรุณาเลือก ประเภทสื่อ.',
                         'user_link.required'        => 'ข้อมูล Social Network : กรุณากรอก บัญชีผู้ใช้งาน/ลิ้งค์.',
-                        'n_of_follwer.required'     => 'ข้อมูล Social Network : กรุณากรอก  จำนวน Follower.',
+                        // 'n_of_follwer.required'     => 'ข้อมูล Social Network : กรุณากรอก  จำนวน Follower.',
                     ]);
                 }
                 if($validator_social_media->fails()){$errors_validator[] = $validator_social_media->errors();}
@@ -1065,11 +1148,10 @@ class BAController extends Controller {
             if(!empty($request['case_stage'])) {
                 $validator_case_stage = Validator::make($request['case_stage'], [
                     'from_stage_id' => 'required',
-                    // 'plan_date'     => 'required',
-                    // 'remark'        => 'required|max:256',
-                    // 'status'        => 'required',
+                    'to_user_id'        => 'required',
                     'to_stage_id'   => 'required',
                 ],[ 'from_stage_id.required'=> 'Workflow   : กรุณาเลือก จากขั้นตอน.',
+                    'to_user_id.required'   => 'Workflow   : กรุณาเลือก ส่งถึง.',
                     'to_stage_id.required'  => 'Workflow   : กรุณาเลือก ถึงขั้นตอน.'
                 ]);
                 if($validator_case_stage->fails()){$errors_validator[] = $validator_case_stage->errors();}
@@ -1175,7 +1257,7 @@ class BAController extends Controller {
                         $patient_case->case_group_id= $request['patient_case']['case_group_id'];
                         $patient_case->doctor_id    = $request['patient_case']['doctor_id'];
                         $patient_case->vn_no        = $request['patient_case']['vn_no'];
-                        // $patient_case->suggest_group= $request['patient_case']['suggest_group'];
+                        $patient_case->suggest_group= $request['patient_case']['suggest_group'];
                         $patient_case->suggested_by = $request['patient_case']['suggested_by'];
                         $patient_case->is_good_case = $request['patient_case']['is_good_case'];
                         $patient_case->is_bad_case  = $request['patient_case']['is_bad_case'];
@@ -1249,6 +1331,7 @@ class BAController extends Controller {
                             $case_followup->case_id = $current_patient_case_id;
                             $case_followup->procedure_id = $s['procedure_id'];
                             $case_followup->followup_year = $s['followup_year'];
+                            $case_followup->remark = $s['remark'];
                             $case_followup->created_by = Auth::id();
                             $case_followup->updated_by = Auth::id();
                             try {
@@ -1749,7 +1832,7 @@ class BAController extends Controller {
                         $patient_case->case_group_id= $request['patient_case']['case_group_id'];
                         $patient_case->doctor_id    = $request['patient_case']['doctor_id'];
                         $patient_case->vn_no        = $request['patient_case']['vn_no'];
-                        // $patient_case->suggest_group= $request['patient_case']['suggest_group'];
+                        $patient_case->suggest_group= $request['patient_case']['suggest_group'];
                         $patient_case->suggested_by = $request['patient_case']['suggested_by'];
                         $patient_case->is_good_case = $request['patient_case']['is_good_case'];
                         $patient_case->is_bad_case  = $request['patient_case']['is_bad_case'];
@@ -1777,7 +1860,7 @@ class BAController extends Controller {
                         $patient_case->case_group_id= $request['patient_case']['case_group_id'];
                         $patient_case->doctor_id    = $request['patient_case']['doctor_id'];
                         $patient_case->vn_no        = $request['patient_case']['vn_no'];
-                        // $patient_case->suggest_group= $request['patient_case']['suggest_group'];
+                        $patient_case->suggest_group= $request['patient_case']['suggest_group'];
                         $patient_case->suggested_by = $request['patient_case']['suggested_by'];
                         $patient_case->is_good_case = $request['patient_case']['is_good_case'];
                         $patient_case->is_bad_case  = $request['patient_case']['is_bad_case'];
@@ -1850,6 +1933,7 @@ class BAController extends Controller {
                                 $case_followup->case_id = $current_patient_case_id;
                                 $case_followup->procedure_id = $s['procedure_id'];
                                 $case_followup->followup_year = $s['followup_year'];
+                                $case_followup->remark = $s['remark'];
                                 $case_followup->created_by = Auth::id();
                                 $case_followup->updated_by = Auth::id();
 
@@ -1859,6 +1943,7 @@ class BAController extends Controller {
                                 $case_followup->case_id = $current_patient_case_id;
                                 $case_followup->procedure_id = $s['procedure_id'];
                                 $case_followup->followup_year = $s['followup_year'];
+                                $case_followup->remark = $s['remark'];
                                 $case_followup->updated_by = Auth::id();
                             }
                             try {
