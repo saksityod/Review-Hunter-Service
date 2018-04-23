@@ -86,11 +86,6 @@ class JasperController extends Controller
         */
         $command = 'java -jar '.base_path('jasperStarter/lib/jasperstarter.jar').'  pr '.base_path('resources/jasper/'.$template_name.'.jasper')
             .'  -f '.$template_format.'  -o '.base_path('resources/generate/'.$name_gen);
-
-            // if(PHP_OS == 'WINNT'){
-            //     $command = 'cd /windows/system32 && '.$command;
-            // }
-
         //shell_exec('java -jar '.base_path('resources/JasperStarter/lib/jasperstarter.jar').'  pr /Users/imake/WORK/PROJECT/GJ/Jasper/jasper_service_api/resources/jasper/CherryTest.jasper  -f pdf  -o /Users/imake/WORK/PROJECT/GJ/Jasper/jasper_service_api/resources/jasper/CherryTest2');
         //shell_exec('java -jar '.base_path('vendor/cossou/jasperphp/src/JasperStarter/lib/jasperstarter.jar').'  pr /Users/imake/WORK/PROJECT/GJ/Jasper/jasper_service_api/resources/jasper/CherryTest.jasper  -f pdf  -o /Users/imake/WORK/PROJECT/GJ/Jasper/jasper_service_api/resources/jasper/CherryTest2');
         //shell_exec('java -jar '.base_path('vendor/imake/JasperStarter/lib/jasperstarter.jar').'  pr /Users/imake/WORK/PROJECT/GJ/Jasper/jasper_service_api/resources/jasper/CherryTest.jasper  -f pdf  -o /Users/imake/WORK/PROJECT/GJ/Jasper/jasper_service_api/resources/jasper/CherryTest2');
@@ -125,9 +120,10 @@ class JasperController extends Controller
                     $command .= $key.'='.$value.' ';
             }
         }
-        // return $command;
+
         shell_exec($command);
 
+        //return $command;
 
         Log::info($command);
         $pathToFile = base_path('resources/generate/'.$name_gen.'.'.$template_format);
