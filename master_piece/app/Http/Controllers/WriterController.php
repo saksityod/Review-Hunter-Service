@@ -336,12 +336,12 @@ class WriterController extends Controller {
                 // return response()->json($social);
                 $validator_social_media = Validator::make([
                     'social_media_id'           => $social->social_media_id,
-                    'user_link'                 => $social->user_link,
+                    'link'                 => $social->link,
                 ], [
                     'social_media_id'           => 'required',
-                    'user_link'                 => 'required|max:255',
+                    'link'                 => 'required|max:255',
                 ],[ 'social_media_id.required'  => 'ช่องทางลงสื่อ : กรุณาเลือก ประเภทสื่อ.',
-                    'user_link.required'        => 'ช่องทางลงสื่อ : กรุณากรอก บัญชีผู้ใช้งาน/ลิ้งค์.',
+                    'link.required'        => 'ช่องทางลงสื่อ : กรุณากรอก ลิ้งค์.',
                 ]);
                 // return response()->json($validator_social_media);
             }
@@ -413,10 +413,12 @@ class WriterController extends Controller {
                 foreach($request['social_media'] as $s) {
                     if (!$s->article_social_media_id) {
                         $article_social_media = new ArticleSocialMedia;
-                        $article_social_media->article_id       = $article->article_id;
-                        $article_social_media->social_media_id  = $s->social_media_id;
-                        $article_social_media->user_link        = $s->user_link;
-                        $article_social_media->n_of_follwer     = $s->n_of_follower;
+                        $article_social_media->article_id = $article->article_id;
+                        $article_social_media->social_media_id = $s->social_media_id;
+                        $article_social_media->link = $s->link;
+                        $article_social_media->usr_name = $s->usr_name;
+                        $article_social_media->pwd = $s->pwd;
+                        $article_social_media->note = $s->note;
                         $article_social_media->created_by = Auth::id();
                         $article_social_media->updated_by = Auth::id();
                         try {
@@ -605,16 +607,20 @@ class WriterController extends Controller {
                         $article_social_media                   = ArticleSocialMedia::findOrFail($s->article_social_media_id);
                         $article_social_media->article_id       = $article->article_id;
                         $article_social_media->social_media_id  = $s->social_media_id;
-                        $article_social_media->user_link        = $s->user_link;
-                        $article_social_media->n_of_follwer     = $s->n_of_follower;
+                        $article_social_media->link = $s->link;
+                        $article_social_media->usr_name = $s->usr_name;
+                        $article_social_media->pwd = $s->pwd;
+                        $article_social_media->note = $s->note;
                         $article_social_media->updated_by = Auth::id();
                         
                     }else{
                         $article_social_media                   = new ArticleSocialMedia;
                         $article_social_media->article_id       = $article->article_id;
                         $article_social_media->social_media_id  = $s->social_media_id;
-                        $article_social_media->user_link        = $s->user_link;
-                        $article_social_media->n_of_follwer     = $s->n_of_follower;
+                        $article_social_media->link = $s->link;
+                        $article_social_media->usr_name = $s->usr_name;
+                        $article_social_media->pwd = $s->pwd;
+                        $article_social_media->note = $s->note;
                         $article_social_media->created_by = Auth::id();
                         $article_social_media->updated_by = Auth::id();
                     }

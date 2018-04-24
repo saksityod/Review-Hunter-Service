@@ -1019,10 +1019,8 @@ class BAController extends Controller {
             if(!empty($request['case_followup'])) {
                 foreach($request['case_followup'] as $row) {
                     $validator_case_followup = Validator::make($row, [
-                        'procedure_id' => 'required|integer',
-                        'followup_year' => 'required|integer'
-                    ],[ 'procedure_id.required' => 'หัตถการที่ควรทำ : กรุณาเลือก ชื่อหัตถการ.',
-                        'followup_year.required'=> 'หัตถการที่ควรทำ : กรุณาเลือก ปีที่ควรทำ.'
+                        'procedure_id' => 'required|integer'
+                    ],[ 'procedure_id.required' => 'หัตถการที่ควรทำ : กรุณาเลือก ชื่อหัตถการ.'
                     ]);
                 }
                 if($validator_case_followup->fails()){$errors_validator[] = $validator_case_followup->errors();}
