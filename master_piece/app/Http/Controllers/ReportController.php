@@ -124,6 +124,31 @@ class ReportController extends Controller
 		return response()->json($items);
 	}
 
+	public function case_supervised_list_user(Request $request)
+	{
+		$items = DB::select("
+            SELECT s.userId, s.screenName
+            FROM lportal.user_ s, lportal.users_roles ur, lportal.role_ r 
+            where s.userId = ur.userId 
+            and ur.roleId = r.roleId 
+            and r.roleId in (22305,22306)
+            group by s.screenName
+            order by s.screenName ASC
+        ");
+		return response()->json($items);
+	}
+
+	public function list_social(Request $request)
+	{
+		$items = DB::select("
+			select social_media_id, social_media_name
+			from social_media
+			where is_active = 1
+			order by social_media_name
+		");
+		return response()->json($items);
+	}
+
 	public function list_selector_time(Request $request)
 	{
 		if($request->time==7) {

@@ -194,19 +194,15 @@ Route::group(['middleware' => 'cors'], function()
 	Route::group(['prefix'=>'report'],function(){
 	  	Route::get('case_list_year','ReportController@case_list_year');
 	  	Route::get('case_list_month','ReportController@case_list_month');
-
 	  	Route::get('writer_list_writer','ReportController@writer_list_writer');
-
 	  	Route::get('case_list_doctor','ReportController@case_list_doctor');
-
 	  	Route::get('case_list_case_type','ReportController@case_list_case_type');
-
 	  	Route::get('case_followup_year','ReportController@case_followup_year');
 	  	Route::get('case_followup_case_type','ReportController@case_followup_case_type');
 	  	Route::get('case_followup_case_group','ReportController@case_followup_case_group');
-
 	  	Route::get('list_selector_time','ReportController@list_selector_time');
-
+	  	Route::get('case_supervised_list_user','ReportController@case_supervised_list_user');
+	  	Route::get('list_social','ReportController@list_social');
 	  	Route::get('api_report','JasperController@api_report');
 	 });
 
