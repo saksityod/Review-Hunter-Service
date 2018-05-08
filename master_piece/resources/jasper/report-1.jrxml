@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-1" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
 	<property name="ireport.zoom" value="1.464100000000004"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="436"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="review_hunter"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -152,7 +154,7 @@
 			<pen lineWidth="0.5" lineColor="#FFFFFF"/>
 		</box>
 	</style>
-	<style name="Crosstab Data Text" hAlign="Center"/>
+	<style name="Crosstab Data Text" hTextAlign="Center" hImageAlign="Center"/>
 	<style name="table 7">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -199,13 +201,13 @@
 		<queryString>
 			<![CDATA[select 'ผ่าน' as status, count(distinct pc.vn_no) as no_of_case
 from patient_case pc, case_stage cs
-where pc.case_id = cs.case_id
+where pc.case_stage_id = cs.case_stage_id
 and from_stage_id > 6 and from_stage_id < 201
 and YEAR(cs.created_dttm) = $P{param_year} AND MONTH(cs.created_dttm) = $P{param_month}
 union all
 select 'ไม่ผ่าน' as status, count(distinct pc.vn_no) as no_of_case
 from patient_case pc, case_stage cs
-where pc.case_id = cs.case_id
+where pc.case_stage_id = cs.case_stage_id
 and from_stage_id <= 6
 and YEAR(cs.created_dttm) = $P{param_year} AND MONTH(cs.created_dttm) = $P{param_month}]]>
 		</queryString>
@@ -257,12 +259,15 @@ group by at.txt_name,at.case_type]]>
 		<field name="total" class="java.math.BigDecimal"/>
 	</subDataset>
 	<subDataset name="performance" uuid="48c7e2c7-45ea-4b76-ae24-6a197119c750">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="review_hunter"/>
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 		<parameter name="param_year" class="java.lang.Integer"/>
 		<parameter name="param_month" class="java.lang.Integer"/>
 		<queryString>
 			<![CDATA[SELECT "ประสิทธิภาพในการทำงาน" txt_name,ROUND(AVG(ex.pot),2) as total
 FROM(select at.case_type,sum(at.target) as target, sum(at.actual) as actual
 , CASE
+		when sum(at.target) = 0 then 0.00
 		when sum(at.target) = sum(at.actual)  then 100.00
 		when sum(at.target) < sum(at.actual)   then 100.00
 		when ROUND((sum(at.actual)*100)/sum(at.target),2) < 0 then 0.00
@@ -542,43 +547,10 @@ group by at.case_type, at.procedure_name]]>
 						</textField>
 					</cellContents>
 				</crosstabCell>
-				<crosstabCell height="25" rowTotalGroup="txt_name">
-					<cellContents backcolor="#BFE1FF" mode="Opaque">
-						<box>
-							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-						</box>
-						<textField>
-							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="7efaf8e4-f736-4f74-ad74-77cd16d3f7d8"/>
-							<textFieldExpression><![CDATA[$V{totalMeasure}]]></textFieldExpression>
-						</textField>
-					</cellContents>
-				</crosstabCell>
-				<crosstabCell width="50" columnTotalGroup="case_type">
-					<cellContents backcolor="#BFE1FF" mode="Opaque">
-						<box>
-							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-						</box>
-						<textField>
-							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="f60c6dca-6428-4f60-9fca-2cf814674336"/>
-							<textFieldExpression><![CDATA[$V{totalMeasure}]]></textFieldExpression>
-						</textField>
-					</cellContents>
-				</crosstabCell>
-				<crosstabCell rowTotalGroup="txt_name" columnTotalGroup="case_type">
-					<cellContents backcolor="#BFE1FF" mode="Opaque">
-						<box>
-							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-						</box>
-						<textField>
-							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="27739203-c92c-46ee-92d6-17c1e823aee1"/>
-							<textFieldExpression><![CDATA[$V{totalMeasure}]]></textFieldExpression>
-						</textField>
-					</cellContents>
-				</crosstabCell>
 			</crosstab>
 			<componentElement>
 				<reportElement key="table 8" style="table 8" x="469" y="37" width="83" height="20" uuid="f46d73bb-3fb9-49f4-b852-458dc818ac5d"/>
-				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="Blank">
 					<datasetRun subDataset="ChartPie" uuid="ff6e0984-67f0-461c-8dbb-80007539b56b">
 						<datasetParameter name="param_year">
 							<datasetParameterExpression><![CDATA[$P{param_year}]]></datasetParameterExpression>
@@ -639,7 +611,7 @@ group by at.case_type, at.procedure_name]]>
 			</staticText>
 			<componentElement>
 				<reportElement key="table 9" x="0" y="412" width="360" height="20" uuid="238db698-c01e-4db4-8210-f75397448404"/>
-				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="Blank">
 					<datasetRun subDataset="performance" uuid="ac4fd43a-b29d-4ea4-a70b-6bfac65ae043">
 						<datasetParameter name="param_year">
 							<datasetParameterExpression><![CDATA[$P{param_year}]]></datasetParameterExpression>
