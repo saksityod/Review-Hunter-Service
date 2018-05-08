@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-2" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-2" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
 	<property name="ireport.zoom" value="1.948717100000005"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="48"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="review_hunter"/>
-	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -27,20 +24,14 @@
 		</box>
 	</style>
 	<subDataset name="ChartPie" uuid="6fc527cf-8c93-462c-abc7-60268e352626">
-		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="review_hunter"/>
-		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="209"/>
-		<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="780"/>
-		<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="720"/>
-		<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="266"/>
 		<parameter name="param_start_date" class="java.lang.String">
-			<defaultValueExpression><![CDATA[2018-01-01]]></defaultValueExpression>
+			<defaultValueExpression><![CDATA[2018-02-01]]></defaultValueExpression>
 		</parameter>
 		<parameter name="param_end_date" class="java.lang.String">
-			<defaultValueExpression><![CDATA[2018-12-31]]></defaultValueExpression>
+			<defaultValueExpression><![CDATA[2018-02-28]]></defaultValueExpression>
 		</parameter>
-		<parameter name="param_writer_code" class="java.lang.Integer">
-			<defaultValueExpression><![CDATA[21803]]></defaultValueExpression>
+		<parameter name="param_writer_code" class="java.lang.String">
+			<defaultValueExpression><![CDATA[27116]]></defaultValueExpression>
 		</parameter>
 		<queryString>
 			<![CDATA[SELECT
@@ -55,11 +46,11 @@ FROM
 			0 AS delay
 		FROM
 			review_hunter.case_article ca,
-			lportal.user_ u
+			lportal_rh.user_ u
 		WHERE
 			ca.writer = u.userId
-		AND ca.writer = $P{param_writer_code} 
-		AND ca.plan_date BETWEEN $P{param_start_date} AND $P{param_end_date} 
+		AND ca.writer = $P{param_writer_code}
+		AND ca.plan_date BETWEEN $P{param_start_date} AND $P{param_end_date}
 		AND ca.writing_end_date IS NOT NULL
 		AND ca.writing_end_date <= ca.plan_date
 		GROUP BY
@@ -75,8 +66,8 @@ FROM
 				lportal.user_ u
 			WHERE
 				ca.writer = u.userId
-			AND ca.writer = $P{param_writer_code} 
-			AND ca.plan_date BETWEEN $P{param_start_date} AND $P{param_end_date} 
+			AND ca.writer = $P{param_writer_code}
+			AND ca.plan_date BETWEEN $P{param_start_date} AND $P{param_end_date}
 			AND (
 				ca.writing_end_date IS NULL
 				OR ca.writing_end_date > ca.plan_date
@@ -94,8 +85,8 @@ FROM
 					lportal.user_ u
 				WHERE
 					ar.writer = u.userId
-				AND ar.writer = $P{param_writer_code} 
-				AND ar.plan_date BETWEEN $P{param_start_date} AND $P{param_end_date} 
+				AND ar.writer = $P{param_writer_code}
+				AND ar.plan_date BETWEEN $P{param_start_date} AND $P{param_end_date}
 				AND ar.writing_end_date IS NOT NULL
 				AND ar.writing_end_date <= ar.plan_date
 				GROUP BY
@@ -111,8 +102,8 @@ FROM
 						lportal.user_ u
 					WHERE
 						ar.writer = u.userId
-					AND ar.writer = $P{param_writer_code} 
-					AND ar.plan_date BETWEEN $P{param_start_date} AND $P{param_end_date} 
+					AND ar.writer = $P{param_writer_code}
+					AND ar.plan_date BETWEEN $P{param_start_date} AND $P{param_end_date}
 					AND (
 						ar.writing_end_date IS NULL
 						OR ar.writing_end_date > ar.plan_date
@@ -136,11 +127,11 @@ FROM
 			0 AS delay
 		FROM
 			review_hunter.case_article ca,
-			lportal.user_ u
+			lportal_rh.user_ u
 		WHERE
 			ca.writer = u.userId
-		AND ca.writer = $P{param_writer_code} 
-		AND ca.plan_date BETWEEN $P{param_start_date} AND $P{param_end_date} 
+		AND ca.writer = $P{param_writer_code}
+		AND ca.plan_date BETWEEN $P{param_start_date} AND $P{param_end_date}
 		AND ca.writing_end_date IS NOT NULL
 		AND ca.writing_end_date <= ca.plan_date
 		GROUP BY
@@ -156,8 +147,8 @@ FROM
 				lportal.user_ u
 			WHERE
 				ca.writer = u.userId
-			AND ca.writer = $P{param_writer_code} 
-			AND ca.plan_date BETWEEN $P{param_start_date} AND $P{param_end_date} 
+			AND ca.writer = $P{param_writer_code}
+			AND ca.plan_date BETWEEN $P{param_start_date} AND $P{param_end_date}
 			AND (
 				ca.writing_end_date IS NULL
 				OR ca.writing_end_date > ca.plan_date
@@ -175,8 +166,8 @@ FROM
 					lportal.user_ u
 				WHERE
 					ar.writer = u.userId
-				AND ar.writer = $P{param_writer_code} 
-				AND ar.plan_date BETWEEN $P{param_start_date} AND $P{param_end_date} 
+				AND ar.writer = $P{param_writer_code}
+				AND ar.plan_date BETWEEN $P{param_start_date} AND $P{param_end_date}
 				AND ar.writing_end_date IS NOT NULL
 				AND ar.writing_end_date <= ar.plan_date
 				GROUP BY
@@ -192,8 +183,8 @@ FROM
 						lportal.user_ u
 					WHERE
 						ar.writer = u.userId
-					AND ar.writer = $P{param_writer_code} 
-					AND ar.plan_date BETWEEN $P{param_start_date} AND $P{param_end_date} 
+					AND ar.writer = $P{param_writer_code}
+					AND ar.plan_date BETWEEN $P{param_start_date} AND $P{param_end_date}
 					AND (
 						ar.writing_end_date IS NULL
 						OR ar.writing_end_date > ar.plan_date
@@ -204,21 +195,17 @@ FROM
 GROUP BY
 	a.writer_name]]>
 		</queryString>
-		<field name="description" class="java.lang.String">
-			<property name="com.jaspersoft.studio.field.label" value="description"/>
-		</field>
-		<field name="total" class="java.math.BigDecimal">
-			<property name="com.jaspersoft.studio.field.label" value="total"/>
-		</field>
+		<field name="description" class="java.lang.String"/>
+		<field name="total" class="java.math.BigDecimal"/>
 	</subDataset>
 	<parameter name="param_start_date" class="java.lang.String">
-		<defaultValueExpression><![CDATA[2018-01-01]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[2018-02-01]]></defaultValueExpression>
 	</parameter>
 	<parameter name="param_end_date" class="java.lang.String">
-		<defaultValueExpression><![CDATA[2018-12-31]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA[2018-02-28]]></defaultValueExpression>
 	</parameter>
-	<parameter name="param_writer_code" class="java.lang.Integer">
-		<defaultValueExpression><![CDATA[21803]]></defaultValueExpression>
+	<parameter name="param_writer_code" class="java.lang.String">
+		<defaultValueExpression><![CDATA[27116]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT
