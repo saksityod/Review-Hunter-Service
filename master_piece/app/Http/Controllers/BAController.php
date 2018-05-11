@@ -1193,7 +1193,7 @@ class BAController extends Controller {
                         $fullPath = $_SERVER['DOCUMENT_ROOT'].'/master_piece/public'.$path;
                         $filename = date('YmdHis').'_'.iconv('UTF-8','windows-874',$file->getClientOriginalName());
                         $file->move($fullPath,$filename); 
-                        $patient->image_path = $path.'/'.$filename;
+                        $patient->image_path = $path.'/'.date('YmdHis').'_'.$file->getClientOriginalName();
                     }else{
                         $patient->image_path = '/uploads/ba/default.jpg';
                     }
@@ -1740,7 +1740,7 @@ class BAController extends Controller {
                             $fullPath = $_SERVER['DOCUMENT_ROOT'].'/master_piece/public'.$path;
                             $filename = date('YmdHis').'_'.iconv('UTF-8','windows-874',$file->getClientOriginalName());
                             $file->move($fullPath,$filename); 
-                            $patient->image_path = $path.'/'.$filename;
+                            $patient->image_path = $path.'/'.date('YmdHis').'_'.$file->getClientOriginalName();
                         }
                         $patient->save();
 

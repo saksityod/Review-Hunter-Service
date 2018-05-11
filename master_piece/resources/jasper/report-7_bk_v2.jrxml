@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-7" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-7" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
 	<property name="ireport.zoom" value="1.6105100000000039"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -36,23 +35,20 @@
 		</parameter>
 		<queryString>
 			<![CDATA[select 'อยู่ระหว่างเขียน' as status, count(distinct pc.vn_no) as total
-from patient_case pc, case_stage cs, case_article ca
+from patient_case pc, case_stage cs
 where pc.case_id = cs.case_id
-and pc.case_id = ca.case_id
 and from_stage_id = 15
 and cs.actual_date between $P{param_start_date} and $P{param_end_date}
 union all
 select 'รออนุมัติ' as status, count(distinct pc.vn_no) as no_of_case
-from patient_case pc, case_stage cs, case_article ca
+from patient_case pc, case_stage cs
 where pc.case_id = cs.case_id
-and pc.case_id = ca.case_id
 and from_stage_id = 16
 and cs.actual_date between $P{param_start_date} and $P{param_end_date}
 union all
 select 'พร้อมเผยแพร่' as status, count(distinct pc.vn_no) as no_of_case
-from patient_case pc, case_stage cs, case_article ca
+from patient_case pc, case_stage cs
 where pc.case_id = cs.case_id
-and pc.case_id = ca.case_id
 and from_stage_id > 16
 and cs.actual_date between $P{param_start_date} and $P{param_end_date}]]>
 		</queryString>
@@ -75,23 +71,20 @@ and cs.actual_date between $P{param_start_date} and $P{param_end_date}]]>
 , SUM(IF(d.status = 'พร้อมเผยแพร่' ,d.no_of_case,0)) as ready_Publish
 FROM (
 select 'อยู่ระหว่างเขียน' as status, count(distinct pc.vn_no) as no_of_case
-from patient_case pc, case_stage cs, case_article ca
+from patient_case pc, case_stage cs
 where pc.case_id = cs.case_id
-and pc.case_id = ca.case_id
 and from_stage_id = 15
 and cs.actual_date between $P{param_start_date} and $P{param_end_date}
 union all
 select 'รออนุมัติ' as status, count(distinct pc.vn_no) as no_of_case
-from patient_case pc, case_stage cs, case_article ca
+from patient_case pc, case_stage cs
 where pc.case_id = cs.case_id
-and pc.case_id = ca.case_id
 and from_stage_id = 16
 and cs.actual_date between $P{param_start_date} and $P{param_end_date}
 union all
 select 'พร้อมเผยแพร่' as status, count(distinct pc.vn_no) as no_of_case
-from patient_case pc, case_stage cs, case_article ca
+from patient_case pc, case_stage cs
 where pc.case_id = cs.case_id
-and pc.case_id = ca.case_id
 and from_stage_id > 16
 and cs.actual_date between $P{param_start_date} and $P{param_end_date}) d]]>
 	</queryString>

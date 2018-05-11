@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-10" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-10" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
 	<property name="ireport.zoom" value="1.7715610000000044"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="510"/>
@@ -56,7 +55,7 @@
 		<queryString>
 			<![CDATA[select sm.social_media_name, count(*) as count_social
 from social_media sm
-inner join case_social_media csm on csm.social_media_id = sm.social_media_id
+inner join case_social_media csm on csm.case_media_id = sm.social_media_id
 where cast(csm.created_dttm as date) between $P{param_start_date} and $P{param_end_date}
 and (sm.social_media_id = $P{param_social_id} or 'All' = $P{param_social_id})
 group by sm.social_media_name
@@ -82,7 +81,7 @@ from patient_case c
 inner join patient p on c.patient_id = p.patient_id
 inner join medical_procedure mp on c.procedure_id = mp.procedure_id
 inner join case_social_media csm on c.case_id = csm.case_id
-inner join social_media sm on csm.social_media_id = sm.social_media_id
+inner join social_media sm on csm.case_media_id = sm.social_media_id
 where cast(csm.created_dttm as date) between $P{param_start_date} and $P{param_end_date}
 and (sm.social_media_id = $P{param_social_id} or 'All' = $P{param_social_id})
 group by csm.social_media_id, c.vn_no, p.patient_name, mp.procedure_name, sm.social_media_name, csm.link
