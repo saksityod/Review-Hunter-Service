@@ -5,6 +5,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="review_hunter2"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -91,18 +92,32 @@ group by c.case_id, c.vn_no, u.firstName, u.lastName, c.status
 order by p.patient_name asc]]>
 	</queryString>
 	<field name="vn_no" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="vn_no"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="patient_case"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
+	<field name="patient_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="patient_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="patient"/>
+	</field>
 	<field name="firstName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="firstName"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="user_"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="lastName" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="lastName"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="user_"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="status" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="status"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="patient_case"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="sum_total" class="java.lang.Long"/>
+	<field name="sum_total" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="sum_total"/>
+	</field>
 	<variable name="sum_total" class="java.lang.Long" calculation="Sum">
 		<variableExpression><![CDATA[$F{sum_total}]]></variableExpression>
 	</variable>
@@ -179,7 +194,7 @@ order by p.patient_name asc]]>
 	<columnHeader>
 		<band height="23">
 			<staticText>
-				<reportElement style="table_To" mode="Opaque" x="38" y="0" width="106" height="23" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="f44aa2d4-a0f7-495a-820c-832c4fdf8237"/>
+				<reportElement style="table_To" mode="Opaque" x="38" y="0" width="72" height="23" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="f44aa2d4-a0f7-495a-820c-832c4fdf8237"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -193,7 +208,7 @@ order by p.patient_name asc]]>
 				<text><![CDATA[VN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_To" mode="Opaque" x="144" y="0" width="175" height="23" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="9ee11f0a-2540-4b3b-b112-384a2328dc21"/>
+				<reportElement style="table_To" mode="Opaque" x="210" y="0" width="109" height="23" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="9ee11f0a-2540-4b3b-b112-384a2328dc21"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -234,20 +249,34 @@ order by p.patient_name asc]]>
 				</textElement>
 				<text><![CDATA[ลำดับ]]></text>
 			</staticText>
+			<staticText>
+				<reportElement style="table_To" mode="Opaque" x="110" y="0" width="100" height="23" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="944ed577-51a6-4b9b-8e6d-46131ce69454"/>
+				<box>
+					<pen lineWidth="0.25"/>
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="15" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ชื่อเคส]]></text>
+			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
 		<band height="20">
 			<textField>
-				<reportElement style="table_TD" x="38" y="0" width="106" height="20" uuid="1343bd35-f444-472b-a20e-31ed4e68102e"/>
+				<reportElement style="table_TD" x="38" y="0" width="72" height="20" uuid="1343bd35-f444-472b-a20e-31ed4e68102e"/>
 				<textElement textAlignment="Center">
 					<font fontName="TH SarabunPSK" size="16"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{vn_no}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="table_TD" x="144" y="0" width="175" height="20" uuid="a0f6171c-7ac8-44f2-aa19-87fca7d07fb1"/>
-				<textElement textAlignment="Left">
+				<reportElement style="table_TD" x="210" y="0" width="109" height="20" uuid="a0f6171c-7ac8-44f2-aa19-87fca7d07fb1"/>
+				<textElement textAlignment="Center">
 					<font fontName="TH SarabunPSK" size="16"/>
 					<paragraph leftIndent="10"/>
 				</textElement>
@@ -267,6 +296,13 @@ order by p.patient_name asc]]>
 					<paragraph rightIndent="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="table_TD" x="110" y="0" width="100" height="20" uuid="6be76db3-d0f9-41ce-869e-65e35f502f2c"/>
+				<textElement textAlignment="Center">
+					<font fontName="TH SarabunPSK" size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{patient_name}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

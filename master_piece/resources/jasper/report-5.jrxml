@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-5" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-5" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
 	<property name="ireport.zoom" value="1.6105100000000039"/>
 	<property name="ireport.x" value="206"/>
 	<property name="ireport.y" value="70"/>
@@ -245,7 +246,7 @@ order by
 		<defaultValueExpression><![CDATA[2]]></defaultValueExpression>
 	</parameter>
 	<queryString>
-		<![CDATA[select p.hn_no, p.patient_name, pc.vn_no, if(n_complete = n_total, 'ครบ', 'ไม่ยังครบ') as STATUS, mp.procedure_name,
+		<![CDATA[select p.hn_no, p.patient_name, pc.vn_no, if(n_complete = n_total, 'ครบ', 'ยังไม่ครบ') as STATUS, mp.procedure_name,
  1 as all_hn_no,
 IF (n_complete = n_total,1,0) AS is_full,
 IF (n_complete != n_total,1,0) AS no_full
@@ -330,7 +331,7 @@ order by mp.procedure_name, p.hn_no, pc.vn_no]]>
 					<pen lineWidth="2.5" lineColor="#74C4C6"/>
 				</graphicElement>
 			</line>
-			<textField evaluationTime="Page">
+			<textField evaluationTime="Auto">
 				<reportElement x="0" y="40" width="555" height="20" uuid="7d76d551-fd53-4e36-81ab-4c07e0fc9142"/>
 				<textElement>
 					<font fontName="TH SarabunPSK" size="16"/>

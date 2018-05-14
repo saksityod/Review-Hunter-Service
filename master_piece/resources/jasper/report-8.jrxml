@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-8" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-8" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Key" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
 	<property name="ireport.zoom" value="1.7715610000000044"/>
 	<property name="ireport.x" value="56"/>
 	<property name="ireport.y" value="536"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="review_hunter2"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -75,31 +78,45 @@ order by mp.procedure_name]]>
 	<parameter name="param_year" class="java.lang.Integer"/>
 	<parameter name="param_case_type" class="java.lang.Integer"/>
 	<parameter name="param_case_group" class="java.lang.Integer"/>
-	<parameter name="param_case_name" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[select p.hn_no, p.patient_name, pc.vn_no, mp.procedure_name,1 as totall
-from patient  p, patient_case pc, case_followup cf, medical_procedure mp
+		<![CDATA[select p.hn_no, p.patient_name, pc.status vn_no, mp.procedure_name,1 as totall, ct.case_type
+from patient  p, patient_case pc, case_followup cf, medical_procedure mp, case_type ct
 where p.patient_id = pc.patient_id
 and pc.case_id = cf.case_id
 and cf.procedure_id = mp.procedure_id
+and pc.case_type_id = ct.case_type_id
 and cf.followup_year = $P{param_year}
 and pc.case_type_id = $P{param_case_type}
 and pc.case_group_id = $P{param_case_group}
 order by mp.procedure_name, p.hn_no, pc.vn_no]]>
 	</queryString>
 	<field name="hn_no" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="hn_no"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="patient"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="patient_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="patient_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="patient"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="vn_no" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="vn_no"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="patient_case"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="procedure_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="procedure_name"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="medical_procedure"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="totall" class="java.lang.Long"/>
+	<field name="totall" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="totall"/>
+	</field>
+	<field name="case_type" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="case_type"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="case_type"/>
+	</field>
 	<variable name="totall_1" class="java.lang.Long" calculation="Sum">
 		<variableExpression><![CDATA[$F{totall}]]></variableExpression>
 	</variable>
@@ -127,12 +144,12 @@ order by mp.procedure_name, p.hn_no, pc.vn_no]]>
 					<pen lineWidth="2.5" lineColor="#74C4C6"/>
 				</graphicElement>
 			</line>
-			<textField evaluationTime="Page">
+			<textField evaluationTime="Auto">
 				<reportElement x="0" y="42" width="555" height="20" uuid="7d76d551-fd53-4e36-81ab-4c07e0fc9142"/>
 				<textElement>
 					<font fontName="TH SarabunPSK" size="16"/>
 				</textElement>
-				<textFieldExpression><![CDATA["เคส :     "+ $P{param_case_name} +"      ปี :      "+$V{year_thai}+"      จำนวน :      "+$V{totall_2}+"      หัตถการ"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["เคส :     "+ $F{case_type} +"      ปี :      "+$V{year_thai}+"      จำนวน :      "+$V{totall_2}+"      หัตถการ"]]></textFieldExpression>
 			</textField>
 			<pieChart>
 				<chart>
@@ -176,7 +193,7 @@ order by mp.procedure_name, p.hn_no, pc.vn_no]]>
 			</pieChart>
 			<componentElement>
 				<reportElement key="table 1" mode="Transparent" x="0" y="327" width="180" height="51" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="59974e65-24a0-4409-a884-347c0388f5f7"/>
-				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="Blank">
 					<datasetRun subDataset="ChartPie" uuid="8ff85a51-eb73-44a2-906e-b716b5d2e09d">
 						<datasetParameter name="param_year">
 							<datasetParameterExpression><![CDATA[$P{param_year}]]></datasetParameterExpression>
@@ -293,7 +310,7 @@ order by mp.procedure_name, p.hn_no, pc.vn_no]]>
 				<text><![CDATA[HN]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_To" mode="Opaque" x="121" y="0" width="199" height="23" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="9ee11f0a-2540-4b3b-b112-384a2328dc21"/>
+				<reportElement style="table_To" mode="Opaque" x="121" y="0" width="169" height="23" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="9ee11f0a-2540-4b3b-b112-384a2328dc21"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -307,7 +324,7 @@ order by mp.procedure_name, p.hn_no, pc.vn_no]]>
 				<text><![CDATA[ชื่อ-นามสกุล]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_To" mode="Opaque" x="320" y="0" width="73" height="23" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="4cb1876b-0d4d-4d4b-82a6-0e9329d79620"/>
+				<reportElement style="table_To" mode="Opaque" x="290" y="0" width="120" height="23" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="4cb1876b-0d4d-4d4b-82a6-0e9329d79620"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -321,7 +338,7 @@ order by mp.procedure_name, p.hn_no, pc.vn_no]]>
 				<text><![CDATA[สถานะ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="table_To" mode="Opaque" x="393" y="0" width="162" height="23" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="670847e7-fa3e-44c7-b811-46bb909bb698"/>
+				<reportElement style="table_To" mode="Opaque" x="410" y="0" width="145" height="23" forecolor="#2B2B26" backcolor="#F0F0F0" uuid="670847e7-fa3e-44c7-b811-46bb909bb698"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -367,7 +384,7 @@ order by mp.procedure_name, p.hn_no, pc.vn_no]]>
 				<textFieldExpression><![CDATA[$F{hn_no}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement style="table 1_TD" x="121" y="0" width="199" height="20" forecolor="#2B2B26" uuid="308faae6-5568-44c1-a112-6d6976ee4ad3"/>
+				<reportElement style="table 1_TD" x="121" y="0" width="169" height="20" forecolor="#2B2B26" uuid="308faae6-5568-44c1-a112-6d6976ee4ad3"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -381,7 +398,7 @@ order by mp.procedure_name, p.hn_no, pc.vn_no]]>
 				<textFieldExpression><![CDATA[$F{patient_name}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="320" y="0" width="73" height="20" forecolor="#2B2B26" uuid="e88ba8cb-d52e-4846-8e49-f00c36a1a400"/>
+				<reportElement x="290" y="0" width="120" height="20" forecolor="#2B2B26" uuid="e88ba8cb-d52e-4846-8e49-f00c36a1a400"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -395,7 +412,7 @@ order by mp.procedure_name, p.hn_no, pc.vn_no]]>
 				<textFieldExpression><![CDATA[$F{vn_no}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="393" y="0" width="162" height="20" forecolor="#2B2B26" uuid="4cb7a3f5-f8e1-4f1e-a0f2-010d8060a178"/>
+				<reportElement x="410" y="0" width="145" height="20" forecolor="#2B2B26" uuid="4cb7a3f5-f8e1-4f1e-a0f2-010d8060a178"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>

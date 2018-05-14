@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-3" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-3" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
 	<property name="ireport.zoom" value="1.6105100000000068"/>
 	<property name="ireport.x" value="220"/>
 	<property name="ireport.y" value="240"/>
@@ -48,7 +49,7 @@
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
 	</style>
-	<style name="Crosstab Data Text" hAlign="Center"/>
+	<style name="Crosstab Data Text" hTextAlign="Center" hImageAlign="Center"/>
 	<style name="table 2">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -324,7 +325,7 @@ and cs.actual_date between $P{param_start_date} and $P{param_end_date}]]>
 	<queryString>
 		<![CDATA[select att.appointment_type_name,
 pt.patient_name,
-DATE_FORMAT(ca.appointment_date,'%d/%m/%Y %h.%i') AS appointment_date,
+CONCAT(DATE_FORMAT(ca.appointment_date,'%d'),'/',DATE_FORMAT(ca.appointment_date,'%m'),'/',DATE_FORMAT(ca.appointment_date,'%Y')+543,' ',TIME(ca.appointment_date)) appointment_date,
 ca.is_vdo_product,
 ca.is_picture_product,
 ca.is_vdo_rh,
@@ -392,7 +393,7 @@ group by att.appointment_type_name,
 			</line>
 			<componentElement>
 				<reportElement key="table 8" style="table 8" x="224" y="44" width="128" height="20" uuid="f18ce28f-69d0-4661-bf45-75dba09ac65e"/>
-				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="Blank">
 					<datasetRun subDataset="OR" uuid="8385d10d-4d85-4bce-b8cf-4607e91b8c7e">
 						<datasetParameter name="param_doctor_id">
 							<datasetParameterExpression><![CDATA[$P{param_doctor_id}]]></datasetParameterExpression>
@@ -425,7 +426,7 @@ group by att.appointment_type_name,
 					</jr:column>
 				</jr:table>
 			</componentElement>
-			<textField evaluationTime="Page">
+			<textField evaluationTime="Auto">
 				<reportElement x="0" y="45" width="224" height="20" uuid="7d76d551-fd53-4e36-81ab-4c07e0fc9142"/>
 				<textElement>
 					<font fontName="TH SarabunPSK" size="16" isBold="false"/>
@@ -542,27 +543,8 @@ group by att.appointment_type_name,
 						</textField>
 					</cellContents>
 				</crosstabCell>
-				<crosstabCell width="50" columnTotalGroup="case_type">
-					<cellContents backcolor="#BFE1FF" mode="Opaque">
-						<box>
-							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-						</box>
-						<textField>
-							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="f4eba9d7-0e97-447c-9aa4-69191dffd6d0"/>
-							<textFieldExpression><![CDATA[$V{ccMeasure}]]></textFieldExpression>
-						</textField>
-					</cellContents>
-				</crosstabCell>
-				<crosstabCell rowTotalGroup="procedure_name" columnTotalGroup="case_type">
-					<cellContents backcolor="#BFE1FF" mode="Opaque">
-						<box>
-							<pen lineWidth="0.5" lineStyle="Solid" lineColor="#000000"/>
-						</box>
-						<textField>
-							<reportElement style="Crosstab Data Text" x="0" y="0" width="50" height="25" uuid="ab9e56b4-ade4-4b44-bdc1-c6478120f8ef"/>
-							<textFieldExpression><![CDATA[$V{ccMeasure}]]></textFieldExpression>
-						</textField>
-					</cellContents>
+				<crosstabCell height="20" rowTotalGroup="procedure_name" columnTotalGroup="case_type">
+					<cellContents/>
 				</crosstabCell>
 			</crosstab>
 		</band>

@@ -173,7 +173,7 @@ group by asm.social_media_id, vn_no, patient_name, mp.procedure_name, asm.link]]
 					</itemLabel>
 				</piePlot>
 			</pieChart>
-			<textField evaluationTime="Page">
+			<textField evaluationTime="Auto">
 				<reportElement x="398" y="52" width="146" height="20" uuid="5572ecaa-3337-4765-a229-05aed15bc78c"/>
 				<textElement>
 					<font fontName="TH SarabunPSK" size="16"/>
