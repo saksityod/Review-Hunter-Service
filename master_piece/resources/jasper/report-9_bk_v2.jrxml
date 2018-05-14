@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-9" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report-9" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3fcfe5e6-299c-4196-bd36-a63955b6b1dd">
 	<property name="ireport.zoom" value="1.7715610000000044"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="review_hunter2"/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -77,18 +75,17 @@ group by mp.procedure_id]]>
 	<parameter name="param_sup_id" class="java.lang.String"/>
 	<parameter name="param_case_type_id" class="java.lang.String"/>
 	<queryString>
-		<![CDATA[select c.vn_no, p.patient_name, u.firstName, u.lastName, c.status, count(*) as sum_total
+		<![CDATA[select c.vn_no, u.firstName, u.lastName, c.status, count(*) as sum_total
 from patient_case c
 inner join medical_procedure mp on c.procedure_id = mp.procedure_id
 inner join case_supervised cs on cs.case_id = c.case_id
 inner join lportal.user_ u on cs.supervised_id = u.userId
 inner join case_type ct on ct.case_type_id = c.case_type_id
-inner join patient p on p.patient_id = c.patient_id
 where cast(c.created_dttm as date) between $P{param_start_date} and $P{param_end_date}
 and (cs.supervised_id = $P{param_sup_id} or 'All' = $P{param_sup_id})
 and (ct.case_type_id = $P{param_case_type_id} or 'All' = $P{param_case_type_id})
 group by c.case_id, c.vn_no, u.firstName, u.lastName, c.status
-order by p.patient_name asc]]>
+order by mp.procedure_id]]>
 	</queryString>
 	<field name="vn_no" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -167,8 +164,8 @@ order by p.patient_name asc]]>
 					</itemLabel>
 				</piePlot>
 			</pieChart>
-			<textField evaluationTime="Auto">
-				<reportElement stretchType="ContainerBottom" x="400" y="52" width="175" height="20" uuid="a0ce183e-6932-41ff-a76b-d028bee17642"/>
+			<textField evaluationTime="Page">
+				<reportElement x="400" y="52" width="155" height="20" uuid="a0ce183e-6932-41ff-a76b-d028bee17642"/>
 				<textElement>
 					<font fontName="TH SarabunPSK" size="16"/>
 				</textElement>
