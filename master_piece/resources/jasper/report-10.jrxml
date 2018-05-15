@@ -4,6 +4,8 @@
 	<property name="ireport.zoom" value="1.7715610000000044"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="510"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="review_hunter3"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -60,7 +62,7 @@ inner join case_social_media csm on csm.social_media_id = sm.social_media_id
 where cast(csm.created_dttm as date) between $P{param_start_date} and $P{param_end_date}
 and (sm.social_media_id = $P{param_social_id} or 'All' = $P{param_social_id})
 group by sm.social_media_name
-union all
+union
 select sm.social_media_name, count(*) as count_social
 from social_media sm
 inner join article_social_media asm on asm.social_media_id = sm.social_media_id
@@ -97,21 +99,28 @@ and (sm.social_media_id = $P{param_social_id} or 'All' = $P{param_social_id})
 group by asm.social_media_id, vn_no, patient_name, mp.procedure_name, asm.link]]>
 	</queryString>
 	<field name="vn_no" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="vn_no"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="patient_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="patient_name"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="procedure_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="procedure_name"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="social_media_name" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="social_media_name"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="link" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="link"/>
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
-	<field name="count_social" class="java.lang.Long"/>
+	<field name="count_social" class="java.lang.Long">
+		<property name="com.jaspersoft.studio.field.label" value="count_social"/>
+	</field>
 	<variable name="sum_total" class="java.lang.Long" calculation="Sum">
 		<variableExpression><![CDATA[$F{count_social}]]></variableExpression>
 	</variable>
@@ -135,7 +144,7 @@ group by asm.social_media_id, vn_no, patient_name, mp.procedure_name, asm.link]]
 			</line>
 			<pieChart>
 				<chart>
-					<reportElement mode="Transparent" x="0" y="72" width="555" height="241" backcolor="#FFFFFF" uuid="990f5538-3bd2-41b2-bad2-c7d0541c07cb"/>
+					<reportElement mode="Transparent" x="0" y="72" width="555" height="241" backcolor="#FFFFFF" uuid="64ff859a-bae6-4ddc-a4de-9e816fbd389a"/>
 					<box>
 						<pen lineColor="#000000"/>
 						<topPen lineWidth="0.25" lineColor="rgba(204, 204, 204, 0.52156866)"/>
@@ -151,7 +160,7 @@ group by asm.social_media_id, vn_no, patient_name, mp.procedure_name, asm.link]]
 				</chart>
 				<pieDataset>
 					<dataset>
-						<datasetRun subDataset="ChartPie" uuid="11cee5b7-46f1-4ef1-94e2-475b932afc93">
+						<datasetRun subDataset="ChartPie" uuid="b066642c-3d82-4797-85d3-d3c902837b51">
 							<datasetParameter name="param_start_date">
 								<datasetParameterExpression><![CDATA[$P{param_start_date}]]></datasetParameterExpression>
 							</datasetParameter>
