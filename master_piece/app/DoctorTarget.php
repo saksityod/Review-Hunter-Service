@@ -35,6 +35,9 @@ class DoctorTarget extends Model
     public function doctorProcedure() {
         return $this->hasOne('App\DoctorProcedure','procedure_id','procedure_id');
     }
+    public function medicalProcedure() {
+        return $this->hasOne('App\MedicalProcedure','procedure_id','procedure_id');
+    }
     public function doctorTargetAlert() {
         return $this->hasMany('App\DoctorTargetAlert','doctor_target_id','doctor_target_id');
     }

@@ -149,18 +149,30 @@ class DoctorTargetController extends Controller {
         //         ->where('year',$year)
         //         ->paginate($perpage);
         $myQry = DoctorTarget::query();
-        $myQry->with([ 'doctor','doctorProcedure.medical_procedure'])
+        $myQry->with(['doctor'])
                 ->whereHas('doctor',function($qry) use($doctorName){
                         $qry->where('doctor_name', 'like','%'.$doctorName.'%');
                     });
 
+        if(empty($procedure)) {
+            $myQry->with(['medicalProcedure']);
+        } else {
+            $myQry->with(['medicalProcedure'])
+            ->whereHas('medicalProcedure',function($qry) use($procedure){
+                $qry->where('procedure_id',$procedure); 
+            });
+        }
+
         if($year)  $myQry->where('year',$year);
 
-        if($procedure)  $myQry->whereHas('doctorProcedure',function($qry) use($procedure){
-                        $qry->where('procedure_id',$procedure); 
-                    });
+        // if($procedure) {
+        //     $myQry->whereHas('doctorProcedure',function($qry) use($procedure){
+        //         $qry->where('procedure_id',$procedure); 
+        //     });
+        // }
 
         $data = $myQry->paginate($perpage);
+        //print_r($data);
         return response()->json($data);
 
     }
