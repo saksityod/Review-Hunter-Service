@@ -4,7 +4,8 @@
 	<property name="ireport.zoom" value="1.464100000000004"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="436"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="review_hunter"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="review_hunter3"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -300,7 +301,9 @@ from patient_case pc, case_type ct
 where pc.case_type_id = ct.case_type_id
 group by ct.case_type
 ) at
-group by at.case_type)ex ;]]>
+group by at.case_type
+HAVING sum(at.target) != 0)ex ;
+)]]>
 		</queryString>
 		<field name="txt_name" class="java.lang.String"/>
 		<field name="total" class="java.math.BigDecimal"/>
