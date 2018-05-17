@@ -5,7 +5,6 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="436"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="review_hunter3"/>
-	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<style name="table">
 		<box>
 			<pen lineWidth="1.0" lineColor="#000000"/>
@@ -200,13 +199,13 @@
 		<parameter name="param_year" class="java.lang.Integer"/>
 		<parameter name="param_month" class="java.lang.Integer"/>
 		<queryString>
-			<![CDATA[select 'ผ่าน' as status, count(distinct pc.vn_no) as no_of_case
+			<![CDATA[select 'ผ่าน' as status, count(distinct pc.case_id) as no_of_case
 from patient_case pc, case_stage cs
 where pc.case_stage_id = cs.case_stage_id
 and from_stage_id > 6 and from_stage_id < 201
 and YEAR(cs.created_dttm) = $P{param_year} AND MONTH(cs.created_dttm) = $P{param_month}
 union all
-select 'ไม่ผ่าน' as status, count(distinct pc.vn_no) as no_of_case
+select 'ไม่ผ่าน' as status, count(distinct pc.case_id) as no_of_case
 from patient_case pc, case_stage cs
 where pc.case_stage_id = cs.case_stage_id
 and from_stage_id <= 6
@@ -301,9 +300,7 @@ from patient_case pc, case_type ct
 where pc.case_type_id = ct.case_type_id
 group by ct.case_type
 ) at
-group by at.case_type
-HAVING sum(at.target) != 0)ex ;
-)]]>
+group by at.case_type)ex ;]]>
 		</queryString>
 		<field name="txt_name" class="java.lang.String"/>
 		<field name="total" class="java.math.BigDecimal"/>
