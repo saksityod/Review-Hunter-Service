@@ -102,6 +102,7 @@ Route::group(['middleware' => 'cors'], function()
 		Route::get('sectionRole'		,'BAController@section_role');
 		Route::get('getCaseFile','BAController@get_case_file');
 		Route::get('getFolder/{case_id}','BAController@get_folder');
+		Route::get('getFolder2/{case_id}','BAController@get_folder2');
 		Route::get('getCaseFolder/{case_id}','BAController@get_case_folder');
 		Route::get('getOnLoad'		,'BAController@get_dataOnload');
 		Route::get('getUser'		,'BAController@get_user');

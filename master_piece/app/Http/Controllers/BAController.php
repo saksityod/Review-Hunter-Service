@@ -343,6 +343,19 @@ class BAController extends Controller {
 
     }
 
+    public function get_folder2($case_id){
+        return Folder::whereNull('folder_parent_id')->where('is_active',1)
+                    ->with(['subFolder.caseFolder'=>function($query) use ($case_id){
+                        $query->where('case_id',$case_id);
+                    }])
+                    ->wherehas('caseFolder',function($query) use ($case_id){
+                        $query->where('case_id',$case_id);
+                    })
+                    //->toSql();
+                    ->get();
+
+    }
+
     public function get_caseList(Request $req){
         // return $req->all();
         $search     = $req->search;
@@ -1067,7 +1080,7 @@ class BAController extends Controller {
                     'case_type_id'  => 'required',
                     'case_group_id' => 'required',
                     'doctor_id'     => 'required',
-                    // 'suggested_by' => 'required|max:256',
+                    'supervised_by' => 'required',
                     // 'is_good_case' => 'required|boolean',
                     // 'is_bad_case' => 'required|boolean',
                     // 'is_good_review' => 'required|boolean',
@@ -1077,7 +1090,8 @@ class BAController extends Controller {
                 ],['procedure_id.required'  => 'ข้อมูลการทำหัตถการ : กรุณาเลือก หัตถการ.',
                    'case_type_id.required'  => 'ข้อมูลการทำหัตถการ : กรุณาเลือก ประเภท Case.',
                    'case_group_id.required' => 'ข้อมูลการทำหัตถการ : กรุณาเลือก กลุ่มของ Case.',
-                   'doctor_id.required'     => 'ข้อมูลการทำหัตถการ : กรุณาเลือก แพทย์.', 
+                   'doctor_id.required'     => 'ข้อมูลการทำหัตถการ : กรุณาเลือก แพทย์.',
+                   'supervised_by.required'     => 'ข้อมูลการทำหัตถการ : กรุณากรอก ผู้ดูแล.',
                ]);
                 if($validator_patient_case->fails()){$errors_validator[] = $validator_patient_case->errors();}
             //}
