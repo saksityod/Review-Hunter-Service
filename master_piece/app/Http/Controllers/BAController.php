@@ -109,23 +109,54 @@ class BAController extends Controller {
 
             // child folder
             if($folder->parentFolder){
+
                 $path = public_path().'/uploads/ba/'.$case->patient_id.'/'.$case->case_id.'/file/'.$folder->parentFolder->folder_name.'/'.$folder->folder_name;
-                $folder->caseFolder()->delete();
-                if($folder->caseFile) $folder->caseFile()->delete();
+                //$folder->caseFolder()->delete();
+                DB::table('case_folder')
+                ->where('folder_id', '=', $folder->folder_id)
+                ->where('case_id', '=', $case->case_id)->delete();
+
+                if($folder->caseFile) {
+                    //$folder->caseFile()->delete();
+                    DB::table('case_file')
+                    ->where('folder_id', '=', $folder->folder_id)
+                    ->where('case_id', '=', $case->case_id)->delete();
+                }
+
                 File::deleteDirectory($path);
-                if($folder->is_template !=1)    $folder->delete();
+
+                if($folder->is_template !=1) {
+                    $folder->delete();
+                }
+
             }else{
                 // parent folder
+
                 if($folder->subFolder){
                     foreach ($folder->subFolder as $sub) {
-                        if($sub->caseFolder)   $sub->caseFolder()->delete();
-                        if($sub->caseFile)     $sub->caseFile()->delete();
+                        if($sub->caseFolder) {
+                            $sub->caseFolder()->delete();
+                        }
+                        if($sub->caseFile) {
+                            $sub->caseFile()->delete();
+                        }
+
                         File::deleteDirectory(public_path().'/uploads/ba/'.$case->patient_id.'/'.$case->case_id.'/file/'.$sub->parentFolder->folder_name.'/'.$sub->folder_name);
                         if($sub->is_template !=1) $sub->delete();
                     }
                 }
-                $folder->caseFolder()->delete();
-                if($folder->caseFile) $folder->caseFile()->delete();
+
+                //$folder->caseFolder()->delete();
+                DB::table('case_folder')
+                ->where('folder_id', '=', $folder->folder_id)
+                ->where('case_id', '=', $case->case_id)->delete();
+
+                if($folder->caseFile) {
+                    //$folder->caseFile()->delete();
+                    DB::table('case_file')
+                    ->where('folder_id', '=', $folder->folder_id)
+                    ->where('case_id', '=', $case->case_id)->delete();
+                }
                 File::deleteDirectory(public_path().'/uploads/ba/'.$case->patient_id.'/'.$case->case_id.'/file/'.$folder->folder_name);
                 if($folder->is_template !=1)    $folder->delete();
             }
@@ -267,14 +298,49 @@ class BAController extends Controller {
     }
 
     public function get_folder($case_id){
-        return Folder::whereNull('folder_parent_id')->where('is_active',1)
-                    ->with(['subFolder.caseFolder'=>function($query) use ($case_id){
-                        $query->where('case_id',$case_id);
-                    }])
-                    ->wherehas('caseFolder',function($query) use ($case_id){
-                        $query->where('case_id',$case_id);
-                    })
-                    ->get();
+        // return Folder::whereNull('folder_parent_id')->where('is_active',1)
+        //             ->with(['subFolder.caseFolder'=>function($query) use ($case_id){
+        //                 $query->where('case_id',$case_id);
+        //             }])
+        //             ->wherehas('caseFolder',function($query) use ($case_id){
+        //                 $query->where('case_id',$case_id);
+        //             })
+        //             //->toSql();
+        //             ->get();
+
+        $main_folder = DB::select("
+            SELECT * 
+            FROM folder 
+            WHERE folder_parent_id IS NULL 
+            AND is_active = 1
+            AND (
+                SELECT count(*)
+                FROM case_folder
+                WHERE case_folder.folder_id = folder.folder_id
+                AND case_id = {$case_id}
+                ) >= 1
+        ");
+
+        $data_array = [];
+        foreach ($main_folder as $key => $value) {
+            $sub_folder = DB::select("
+                SELECT *
+                FROM folder
+                WHERE folder_parent_id = {$value->folder_id}
+                AND (
+                    SELECT 1 
+                    FROM case_folder 
+                    WHERE case_folder.folder_id = folder.folder_id
+                    AND case_folder.case_id = {$case_id}
+                    )
+            ");
+
+            $value->sub_folder = $sub_folder;
+            $data_array[] = $value;
+        }
+
+        return $data_array;
+
     }
 
     public function get_caseList(Request $req){
