@@ -1148,7 +1148,7 @@ class BAController extends Controller {
                 foreach($request['case_appointment'] as $row) {
                     $validator_case_appointment = Validator::make($row, [
                         'appointment_type_id' => 'required',
-                        'appointment_date' => 'required',
+                        'appointment_date' => 'required|date|date_format:Y-m-d H:i',
                         'doctor_id' => 'required|integer',
                         // 'is_vdo_product' => 'required|boolean',
                         // 'is_vdo_rh' => 'required|boolean',
@@ -1158,7 +1158,9 @@ class BAController extends Controller {
                         // 'remark' => 'required|max:1000',
                     ],[ 'appointment_type_id.required'  => 'นัดหมาย : กรุณาเลือก ประเภทนัดหมาย.',
                         'appointment_date.required'     => 'นัดหมาย : กรุณาเลือก ณ วันที่.',
-                        'doctor_id.required'            => 'นัดหมาย : กรุณาเลือก แพทย์.'
+                        'doctor_id.required'            => 'นัดหมาย : กรุณาเลือก แพทย์.',
+                        'appointment_date.date'         => 'นัดหมาย : กรุณาเลือก ณ วันที่',
+                        'appointment_date.date_format'  => ' เวลา.',
                     ]);
                 }
                 if($validator_case_appointment->fails()){$errors_validator[] = $validator_case_appointment->errors();}
