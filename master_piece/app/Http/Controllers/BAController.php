@@ -687,8 +687,8 @@ class BAController extends Controller {
                         $item = new CaseFile();
                         $item->case_id      = $case_id;
                         $item->folder_id    = $folder_id;
-                        $item->file_name    = $filename;
-                        $item->image_path   = $path.'/'.$filename;
+                        $item->file_name    = date('YmdHis').'_'.$file->getClientOriginalName();
+                        $item->image_path   = $path.'/'.date('YmdHis').'_'.$file->getClientOriginalName();
                         $item->user_id      = Auth::user()->userId;
                         $item->created_by   = Auth::id();
                         try {
@@ -1552,7 +1552,7 @@ class BAController extends Controller {
                                         $filename = date('YmdHis').'_'.iconv('UTF-8','windows-874',$file->getClientOriginalName());
                                         $file->move($fullPath,$filename);
                                         $item = new CaseContractDoc();
-                                        $item->contract_path = $path.'/'.$filename;
+                                        $item->contract_path = $path.'/'.date('YmdHis').'_'.$file->getClientOriginalName();
                                         $item->contract_id = $current_contract_id;
                                         $item->created_by = Auth::id();
                                         try {
@@ -1605,7 +1605,7 @@ class BAController extends Controller {
                                         $filename = date('YmdHis').'_'.iconv('UTF-8','windows-874',$file->getClientOriginalName());
                                         $file->move($fullPath,$filename);
                                         $item = new CaseContractDoc();
-                                        $item->contract_path = $path.'/'.$filename;
+                                        $item->contract_path = $path.'/'.date('YmdHis').'_'.$file->getClientOriginalName();
                                         $item->contract_id = $current_contract_id;
                                         $item->created_by = Auth::id();
                                         try {
@@ -1683,7 +1683,7 @@ class BAController extends Controller {
                                     $file->move($fullPath,$filename);
                                     $item = new CaseArticleDoc();
                                     $item->case_article_id  = $current_case_article;
-                                    $item->article_path     = $path.'/'.$filename;
+                                    $item->article_path     = $path.'/'.date('YmdHis').'_'.$file->getClientOriginalName();
                                     $item->created_by       = Auth::id();
                                     try {
                                         $item->save();
@@ -1771,7 +1771,7 @@ class BAController extends Controller {
 
                                 $item = new CaseStageDoc();
                                 $item->case_stage_id = $current_case_stage;
-                                $item->doc_path      = $path.'/'.$filename;
+                                $item->doc_path      = $path.'/'.date('YmdHis').'_'.$file->getClientOriginalName();
                                 $item->created_by = Auth::id();
                                 try {
                                     $item->save();
@@ -2210,7 +2210,7 @@ class BAController extends Controller {
                                         $filename = date('YmdHis').'_'.iconv('UTF-8','windows-874',$file->getClientOriginalName());
                                         $file->move($fullPath,$filename);
                                         $item = new CaseContractDoc();
-                                        $item->contract_path = $path.'/'.$filename;
+                                        $item->contract_path = $path.'/'.date('YmdHis').'_'.$file->getClientOriginalName();
                                         $item->contract_id = $current_contract_id;
                                         $item->created_by = Auth::id();
                                         try {
@@ -2263,7 +2263,7 @@ class BAController extends Controller {
                                         $filename = date('YmdHis').'_'.iconv('UTF-8','windows-874',$file->getClientOriginalName());
                                         $file->move($fullPath,$filename);
                                         $item = new CaseContractDoc();
-                                        $item->contract_path = $path.'/'.$filename;
+                                        $item->contract_path = $path.'/'.date('YmdHis').'_'.$file->getClientOriginalName();
                                         $item->contract_id = $current_contract_id;
                                         $item->created_by = Auth::id();
                                         try {
@@ -2361,7 +2361,7 @@ class BAController extends Controller {
                                         $file->move($fullPath,$filename);
                                         $item = new CaseArticleDoc();
                                         $item->case_article_id  = $current_case_article;
-                                        $item->article_path     = $path.'/'.$filename;
+                                        $item->article_path     = $path.'/'.date('YmdHis').'_'.$file->getClientOriginalName();
                                         $item->created_by       = Auth::id();
                                         try {
                                             $item->save();
@@ -2409,7 +2409,7 @@ class BAController extends Controller {
                                         $file->move($fullPath,$filename);
                                         $item = new CaseArticleDoc();
                                         $item->case_article_id  = $current_case_article;
-                                        $item->article_path     = $path.'/'.$filename;
+                                        $item->article_path     = $path.'/'.date('YmdHis').'_'.$file->getClientOriginalName();
                                         $item->created_by       = Auth::id();
                                         try {
                                             $item->save();
@@ -2494,7 +2494,7 @@ class BAController extends Controller {
                                 $file->move($fullPath,$filename);
                                 $item = new CaseStageDoc();
                                 $item->case_stage_id = $current_case_stage;
-                                $item->doc_path      = $path.'/'.$filename;
+                                $item->doc_path      = $path.'/'.date('YmdHis').'_'.$file->getClientOriginalName();
                                 $item->created_by = Auth::id();
                                 try {
                                     $item->save();
