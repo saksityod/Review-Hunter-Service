@@ -423,6 +423,28 @@ class BAController extends Controller {
     }
 
     public function cu_followup(Request $req){
+
+        if(empty($req->case_followup)) return response()->json(['status' => 401]);
+
+        $errors_validator = [];
+
+        if(!empty($req->case_followup)) {
+            foreach($req->case_followup as $row) {
+                $validator_case_followup = Validator::make($row, [
+                    'procedure_id' => 'required|integer'
+                ],
+                [
+                    'procedure_id.required' => 'หัตถการที่ควรทำ : กรุณาเลือก ชื่อหัตถการ.'
+                ]);
+            }
+
+            if($validator_case_followup->fails()){$errors_validator[] = $validator_case_followup->errors();}
+        }
+
+        if(!empty($errors_validator)) {
+            return response()->json(['status' => 400, 'errors' => $errors_validator]);
+        }
+
         try {
             $case_id = $req->case_id;
             $followups = $req->case_followup;
@@ -447,7 +469,7 @@ class BAController extends Controller {
             $data = CaseFollowUp::where('case_id',$case_id)->get();
             return response()->json(['status'=>200,'data'=>$data]);
         } catch (Exception $e) {
-            return response()->json(['status' => 400, 'errors' =>  $e]);
+            return response()->json(['status' => 401, 'errors' =>  $e]);
         }
     }
 
