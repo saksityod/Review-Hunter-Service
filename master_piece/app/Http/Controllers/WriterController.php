@@ -235,6 +235,16 @@ class WriterController extends Controller {
         $doctor_id = (empty($request->doctor_id)) ? "" : "and a.doctor_id = '{$request->doctor_id}'";
         $article_code = (empty($request->article_code)) ? "like '%%'" : "like '%{$request->article_code}%'";
 
+        if(empty($request->writing_start_date) && empty($request->writing_end_date)) {
+            $between = "and 1=1";
+        } else if(empty($request->writing_start_date)) {
+            $between = "and a.writing_start_date between '' and '{$request->writing_end_date}'";
+        } else if(empty($request->writing_end_date)) {
+            $between = "and a.writing_start_date >= '{$request->writing_start_date}'";
+        } else {
+            $between = "and a.writing_start_date between '{$request->writing_start_date}' and '{$request->writing_end_date}'";
+        }
+
         $query = "
             SELECT a.article_id,
                     a.article_code,
@@ -258,7 +268,7 @@ class WriterController extends Controller {
             and a.procedure_id $procedure_id
             ".$doctor_id."
             and a.article_code $article_code
-            and a.writing_start_date between '{$request->writing_start_date}' and '{$request->writing_end_date}'
+            ".$between."
         ";
 
         $items = DB::select($query);
